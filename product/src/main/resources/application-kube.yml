@@ -1,0 +1,42 @@
+#Server
+server:
+  port: 8002
+  servlet:
+    context-path: /product
+  error:
+    include-message: always
+#Management
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+#Spring
+spring:
+  application:
+    name: product
+  datasource:
+    url: jdbc:postgresql://postgres:5432/product
+    username: miliariadnane
+    password: password
+  zipkin:
+    baseUrl: http://zipkin:9411
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+#Eureka-Client
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+    enabled: false

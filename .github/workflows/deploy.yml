@@ -1,0 +1,100 @@
+name: Deploy to AWS EKS - CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  # AWS Bucket Keys
+  ACCESS_KEY_BUCKET: ${{ secrets.ACCESS_KEY_BUCKET }}
+  SECRET_KEY_BUCKET: ${{ secrets.SECRET_KEY_BUCKET }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: generate image tag
+      id: image-tag
+      run: echo "::set-output name=IMAGE_TAG::$(date '+%d.%m.%Y.%H.%M.%S')"
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+    - name: maven clean package & push image to dockerhub
+      run: mvn clean package
+        -P jib-build-push-image-to-dockerhub
+        -Dimage.custom.tag=${{ steps.image-tag.outputs.IMAGE_TAG }}
+        -Dapp.env.var1=${{ env.ACCESS_KEY_BUCKET }}
+        -Dapp.env.var2=${{ env.SECRET_KEY_BUCKET }}
+
+    - name: update images version in k8s manifests resources and commit changes
+      run: |
+        IMAGE_TAG=${{ steps.image-tag.outputs.IMAGE_TAG }}
+        echo -e "Current k8s/aws-eks/services/customer/deployment.yml\n$(cat k8s/aws-eks/services/customer/deployment.yml)"
+        sed -i -E 's_(miliariadnane/customer:)([^"]*)_\1'${IMAGE_TAG}'_' k8s/aws-eks/services/customer/deployment.yml
+        echo -e "Current k8s/aws-eks/services/customer/deployment.yml\n$(cat k8s/aws-eks/services/customer/deployment.yml)"
+        
+         echo -e "Current k8s/aws-eks/services/product/deployment.yml\n$(cat k8s/aws-eks/services/product/deployment.yml)"
+        sed -i -E 's_(miliariadnane/product:)([^"]*)_\1'${IMAGE_TAG}'_' k8s/aws-eks/services/product/deployment.yml
+        echo -e "Current k8s/aws-eks/services/product/deployment.yml\n$(cat k8s/aws-eks/services/product/deployment.yml)"
+
+        echo -e "Current k8s/aws-eks/services/order/deployment.yml\n$(cat k8s/aws-eks/services/order/deployment.yml)"
+        sed -i -E 's_(miliariadnane/order:)([^"]*)_\1'${IMAGE_TAG}'_' k8s/aws-eks/services/order/deployment.yml
+        echo -e "Current k8s/aws-eks/services/order/deployment.yml\n$(cat k8s/aws-eks/services/order/deployment.yml)"
+
+        echo -e "Current k8s/aws-eks/services/notification/deployment.yml\n$(cat k8s/aws-eks/services/notification/deployment.yml)"
+        sed -i -E 's_(miliariadnane/notification:)([^"]*)_\1'${IMAGE_TAG}'_' k8s/aws-eks/services/notification/deployment.yml
+        echo -e "Current k8s/aws-eks/services/notification/deployment.yml\n$(cat k8s/aws-eks/services/notification/deployment.yml)"
+
+        echo -e "Current k8s/aws-eks/services/payment/deployment.yml\n$(cat k8s/aws-eks/services/payment/deployment.yml)"
+        sed -i -E 's_(miliariadnane/payment:)([^"]*)_\1'${IMAGE_TAG}'_' k8s/aws-eks/services/payment/deployment.yml
+        echo -e "Current k8s/aws-eks/services/payment/deployment.yml\n$(cat k8s/aws-eks/services/payment/deployment.yml)"
+        
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add k8s/aws-eks/services/customer/deployment.yml
+        git add k8s/aws-eks/services/product/deployment.yml
+        git add k8s/aws-eks/services/order/deployment.yml
+        git add k8s/aws-eks/services/payment/deployment.yml
+        git add k8s/aws-eks/services/notification/deployment.yml
+        git commit -m "new app version: ${IMAGE_TAG}"
+        git push
+
+    - name: install kubectl
+      uses: azure/setup-kubectl@v1
+      with:
+        version: 'v1.21.5'
+      id: install-kubectl
+
+    - name: setup aws credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ca-central-1
+
+    - name: update kube config
+      run: aws eks update-kubeconfig --name demo-microservices --region ca-central-1
+
+    - name: deploy customer service
+      run: |
+        kubectl apply -f k8s/aws-eks/services/customer/deployment.yml
+        kubectl apply -f k8s/aws-eks/services/product/deployment.yml
+        kubectl apply -f k8s/aws-eks/services/order/deployment.yml
+        kubectl apply -f k8s/aws-eks/services/notification/deployment.yml
+        kubectl apply -f k8s/aws-eks/services/payment/deployment.yml
+        
+      

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>dev.nano</groupId>
+  <artifactId>ecomicroservices</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <modules>
+    <module>customer</module>
+    <module>product</module>
+    <module>order</module>
+    <module>notification</module>
+    <module>payment</module>
+    <module>eureka-server</module>
+    <module>gateway</module>
+    <module>amqp</module>
+    <module>feign-clients</module>
+  </modules>
+
+  <name>ecomicroservices</name>
+  <!-- FIXME change it to the project's website -->
+  <url>http://www.example.com</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.version>3.8.0</maven.compiler.version>
+    <lombok.version>1.18.22</lombok.version>
+    <map.struct.version>1.4.2.Final</map.struct.version>
+    <jib.maven.plugin.version>3.2.0</jib.maven.plugin.version>
+    <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
+    <spring.boot.maven.plugin.version>2.6.4</spring.boot.maven.plugin.version>
+    <spring.boot.dependencies.version>2.6.4</spring.boot.dependencies.version>
+    <spring.cloud.dependencies.version>2021.0.3</spring.cloud.dependencies.version>
+    <image>miliariadnane/${project.artifactId}</image>
+    <image.custom.tag/>
+  </properties>
+
+  <!--  All sub-module can pick one of list spring dependencies in there pom.xml -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot.dependencies.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring.cloud.dependencies.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <!--  Apply for all sub-module by default auto imported dependency below in pom.xml-->
+  <dependencies>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-openfeign</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!--  Apply all sub-module can pick one of list plugins in their pom.xml -->
+    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may move to parent pom) -->
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId> <!-- it's allows to package executable jar or war archives -->
+          <version>${spring.boot.maven.plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

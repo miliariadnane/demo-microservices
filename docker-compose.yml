@@ -1,0 +1,222 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14.5-alpine
+    environment:
+      POSTGRES_USER: miliariadnane
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - spring
+      - monitoring
+  rabbitmq:
+    image: rabbitmq:3.9.20-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # default port for RabbitMQ
+      - "15672:15672" # management port
+    networks:
+      - spring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - monitoring
+    depends_on:
+      - eureka-server
+      - gateway
+      - customer
+      - product
+      - order
+      - notification
+      - payment
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+  node-exporter:
+    image: prom/node-exporter:latest # Prometheus component that exports system metrics to Prometheus
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - "9100:9100"
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+      - grafana
+  eureka-server:
+    image: miliariadnane/eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - monitoring
+    depends_on:
+      - zipkin
+  gateway:
+    image: miliariadnane/gateway:latest
+    container_name: gateway
+    ports:
+      - "8006:8006"
+    networks:
+      - spring
+      - monitoring
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - zipkin
+      - eureka-server
+  customer:
+    image: miliariadnane/customer:latest
+    container_name: customer
+    ports:
+      - "8001:8001"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - postgres
+      - monitoring
+    depends_on:
+      - eureka-server
+      - gateway
+      - postgres
+      - zipkin
+      - rabbitmq
+  product:
+    image: miliariadnane/product:latest
+    container_name: product
+    ports:
+      - "8002:8002"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - postgres
+      - monitoring
+    depends_on:
+      - eureka-server
+      - gateway
+      - postgres
+      - zipkin
+      - rabbitmq
+  order:
+    image: miliariadnane/order:latest
+    container_name: order
+    ports:
+      - "8003:8003"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - postgres
+      - monitoring
+    depends_on:
+      - eureka-server
+      - gateway
+      - postgres
+      - zipkin
+      - rabbitmq
+  notification:
+    image: miliariadnane/notification:latest
+    container_name: notification
+    ports:
+      - "8004:8004"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - postgres
+      - monitoring
+    depends_on:
+      - eureka-server
+      - gateway
+      - postgres
+      - zipkin
+      - rabbitmq
+  payment:
+    image: miliariadnane/payment:latest
+    container_name: payment
+    ports:
+      - "8005:8005"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - postgres
+      - monitoring
+    depends_on:
+      - eureka-server
+      - gateway
+      - postgres
+      - zipkin
+      - rabbitmq
+
+networks:
+  postgres:
+    driver: bridge
+  spring:
+    driver: bridge
+  monitoring:
+    driver: bridge
+volumes:
+  postgres:
+  pgadmin:
+  prometheus_data: {}

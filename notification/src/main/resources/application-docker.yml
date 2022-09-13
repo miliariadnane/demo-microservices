@@ -1,0 +1,51 @@
+#Server
+server:
+  port: 8004
+  servlet:
+    context-path: /notification
+  error:
+    include-message: always
+#Management
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+#Spring
+spring:
+  application:
+    name: notification
+  datasource:
+    url: jdbc:postgresql://postgres:5432/notification
+    username: miliariadnane
+    password: password
+  zipkin:
+    baseUrl: http://zipkin:9411
+  rabbitmq:
+    addresses: rabbitmq:5672
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+#Eureka-Client
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+#RabbitMQ
+rabbitmq:
+  exchange:
+    internal: internal.exchange
+  queue:
+    notification: notification.queue
+  routing-key:
+    internal-notification: internal.notification.routing-key
