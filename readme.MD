@@ -1,7 +1,7 @@
 <p align="center">
    <img src="https://img.shields.io/badge/Dev-miliariadnane-blue?style"/>
    <img src="https://img.shields.io/badge/language-java-red?style"/>
-   <img src="https://img.shields.io/badge/Framework-Spring-Franmeworks-green?style"/>
+   <img src="https://img.shields.io/badge/Framework-SpringFrameworks-green?style"/>
    <img src="https://img.shields.io/github/stars/miliariadnane/demo-microservices"/>
    <img src="https://img.shields.io/github/forks/miliariadnane/demo-microservices"/>
    <img src="https://img.shields.io/static/v1?label=%F0%9F%8C%9F&message=If%20Useful&style=style=flat&color=BC4E99"/>
