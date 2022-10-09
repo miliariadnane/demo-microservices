@@ -9,9 +9,18 @@
 
 ## Overview
 
-This repo contains demo about how to build simple ecommerce microservices app from scratch based on spring boot (spring cloud, spring cloud gateway, spring data JPA, spring web, ...), deployed on Kubernetes and AWS using EKS.
+This repo contains demo about how to build simple ecommerce microservices app from scratch **`step by step`** based on spring boot (spring cloud, spring cloud gateway, spring data JPA, spring web, ...), deployed on Kubernetes and AWS using EKS.
 
 The content part explains some concepts in microservices architecture like : service discovery, load balancing, distributed tracing, massaging & Advanced Message Queuing Protocol, ...
+
+The app composed of 5 microservices [customer - product - order - payment - notification] communicating with each other using REST API (+ Open Feign) and messaging system (RabbitMQ).
+
+Over the demonstration and documentation, we will cover a bunch of concepts in the microservice architecture :
+   
+ - Service Discovery
+ - Traffic management : Spring Cloud Gateway - Zipkin 
+ - Resiliency : Load balancing strategy 
+ - Observability : Spring Boot Actuator - Prometheus - Grafana - Tracing
 
 ## Diagrams
 
@@ -37,6 +46,7 @@ The content part explains some concepts in microservices architecture like : ser
 - [7. Migrate From restTemplate to OpenFeign](#7-migrate-from-restTemplate-to-openFeign)
   - [1. Why OpenFeign](#1-why-openFeign)
   - [2. Steps to configure OpenFeign](#2-steps-to-configure-openFeign)
+  - [3. Diagram of the communication between microservices](#3-diagram-of-the-communication-between-microservices)
 - [8. Load Balancing concept](#8-load-balancing-concept)
 - [9. Spring Cloud Gateway](#9-spring-cloud-gateway)
   - [1. What is Spring Cloud Gateway](#1-what-is-spring-cloud-gateway)
@@ -75,24 +85,27 @@ The content part explains some concepts in microservices architecture like : ser
   - [2. Changes application yaml files](#2-changes-application-yaml-files)
   - [3. Add database username & password to deployment.yaml file as secrets](#3-add-database-username--password-to-deploymentyaml-file-as-secrets)
   - [4. Add secrets to eks cluster using command line locally](#4-add-secrets-to-eks-cluster-using-command-line-locally)
+- [19. Deployment workflow diagram](#19-deployment-workflow-diagram)
 
 ## 0. Setup parent Module
 
-### 1. Maven command to generate the project :
+### Maven command to generate the project :
 ```
 mvn archetype:generate -DgroupId=dev.nano -DartifactId=ecomicroservices -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false
 ```
-2. Add maven dependency for the parent module (pom.xml).
 
 ## 1. Setup first microservice
 
-### 1. Generate new module for customer microservices
-   1. Add maven dependencies for customer module in **_pom.xml_** : 
+### Generate new module for customer microservices
+
+   In order to create microservices instances in top of the parent module, we need to generate submodule for each microservice then we add the necessary dependencies.
+
+   1. Add maven dependencies for customer submodule in **_pom.xml_** : 
       * Spring data JPA
       * Spring Web
       * POSTGRES JDBC Driver
       * Hibernate Validator
-   2. Add classes and resources.
+   2. Add classes [controller - service - repository] and resources.
    3. Add customized banner in resource folder.
    4. Configure database connection in **`application.yml`** file.
 
@@ -103,17 +116,21 @@ mvn archetype:generate -DgroupId=dev.nano -DartifactId=ecomicroservices -Darchet
 
 ## 3. Create new microservices
 
-* Create new modules for each microservice : product, order, payment and notification.
+* Create new submodules for each microservice (same thing as on customer microservice) : product, order, payment and notification.
 
 ## 4. Migrate from  **`modelMapper`** to **`mapStruct`** 
 
+  In the beginning, I have used modelMapper to map entities to DTOs and vice versa, but I have found that mapStruct is more efficient and faster than modelMapper. That's why I decided to move to mapStruct.
+
   * `mapStruct` is a library that helps to map objects between two classes, same as `modelMapper`.
-  * But `mapStruct` is more flexible than `modelMapper` and it is easier to use.
+  * `mapStruct` is more flexible and faster than `modelMapper` and it is easier to use.
   * Some resources explain why mapStruct is more performant than modelMapper :
     * https://www.baeldung.com/java-performance-mapping-frameworks
     * https://github.com/arey/java-object-mapper-benchmark
 
-## 5. Communication between microservices using **`restTemplate`** 
+## 5. Communication between microservices using **`restTemplate`**
+
+After creating all microservices, we're supposed to send requests (Http requests) between them via `restTemplate` to get data from other microservices.
 
 1. Make a configuration file for restTemplate
 2. Add restTemplate in the service class using dependency injection
@@ -140,17 +157,24 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
      * look up the service using eureka server.
      * eureka server will return the service information.
 
+   ![eureka-service-discovery](docs/images/eureka-service-discovery.jpeg)
+
+   [Medium Photo By Isuru Jayakantha](https://medium.com/@ijayakantha/microservices-service-registration-and-discovery-with-netflix-eureka-9a2aa729da96)
+   
+
 ### 2. How to use eureka server 
 
    * Add new module for eureka server (Server Side)
-   * Add dependency for eureka in **`pom.xml`** for all modules.
-    ```
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-    </dependency>
-    ```
-  * Add configuration for **application.yml**
+   * Add dependency for eureka in **`pom.xml`** for all microservices.
+    
+```yaml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+</dependency>
+```
+
+  * Add the configuration in **application.yml** file
   * Enable eureka in microservices using **`@EnableEurekaClient`** annotation in Application class.
   * You can check eureka dashboard with the current instances registered with Eureka on : http://localhost:8761
   * In case we would change the url of the service (here I'm talking about the call of microservice using restTemplate) by its name (the name in application yaml file) :
@@ -161,20 +185,28 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
 
 ### 1. Why OpenFeign 
 
-   * OpenFeign is a client-side library that simplifies the use of RESTful web services.
-   * OpenFeign gives more flexibility to use APIs from different microservices just creating interfaces (CustomerOrdersFeignClient & CustomerProductFeignClient) that target the method body in the controller.
+   * `OpenFeign` is a client-side library that simplifies the use of RESTful web services.
+   * `OpenFeign` gives more flexibility to use APIs from different microservices just creating interfaces (CustomerOrdersFeignClient & CustomerProductFeignClient) that target the method body in the controller.
 
 ### 2. Steps to configure OpenFeign 
    * Add maven dependency on the parent module (pom.xml) :
-    ```
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-openfeign</artifactId>
-    </dependency>
-    ```
+    
+```yaml
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+```
+
   * Enable OpenFeign on microservice using **`@EnableFeignClients`** annotation in Application class.
   * Create interfaces for clients (CustomerOrdersFeignClient & CustomerProductFeignClient)
   * Replace restTemplate with OpenFeign in the service class.
+
+### 3. Diagram of the communication between microservices 
+
+  * Use case : Customer and Payment communication via Eureka Server
+    
+  ![eureka-service-discovery](docs/diagrams/communication-between-microservices.png)
 
 ## 8. Load Balancing concept
 
@@ -208,12 +240,14 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
 
    * Create new module for Spring Cloud Gateway.
    * Add maven dependency for Spring Cloud Gateway in **`pom.xml`** :
-    ```
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-gateway</artifactId>
-    </dependency>
-    ```
+    
+```yaml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-gateway</artifactId>
+</dependency>
+```
+
   * Set up the routes in **`application.yml`** file.
   * So at this step, instead of sending request to customer on : "http://localhost:**`8001`**/api/v1/customers", <br/> we will send request on tge port of api-gateway : "http://localhost:**`8004`**`/api/v1/customers".
 
@@ -227,25 +261,30 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
 ### 2. Setup Zipkin 
 
    * Add Zipkin dependency in all microservices over **`pom.xml`** :
-    ```
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-sleuth</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-sleuth-zipkin</artifactId>
-    </dependency>
-    ```
+    
+```yaml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-sleuth</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+</dependency>
+```
    * Add config to application yml files (Example in product microservice) :
-    ```yaml
-    #Spring
-    spring:
-      application:
-        name: product
-      zipkin:
-        base-url: http://localhost:9411
-    ```
+    
+```yaml
+#Spring
+spring:
+  application:
+    name: product
+  zipkin:
+    base-url: http://localhost:9411
+```
+
+   * Screenshots of Zipkin UI in our app :
+    
 
 ## 11. Notification with RabbitMQ 
 
@@ -283,23 +322,25 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
      * Contain the publish method to send messages to the queue.
 
    * Add maven dependency for RabbitMQ in **`pom.xml`** :
-    ```
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-amqp</artifactId>
-    </dependency>
-    ```
+    
+```yaml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+```
 
    * Consume messages from the queue in notification microservice, and store infos in the BD (Example in customer microservice).
-    ```java
-    public class NotificationConsumer {
-        @RabbitListener(queues = "${rabbitmq.queue.notification}")
-        public void consumer(CustomerNotificationRequest customerNotificationRequest) {
-            log.info("Consumed {} from queue", customerNotificationRequest);
-            notificationService.sendNotification(customerNotificationRequest);
-        }
+    
+```java
+public class NotificationConsumer {
+    @RabbitListener(queues = "${rabbitmq.queue.notification}")
+    public void consumer(CustomerNotificationRequest customerNotificationRequest) {
+        log.info("Consumed {} from queue", customerNotificationRequest);
+        notificationService.sendNotification(customerNotificationRequest);
     }
-    ```
+}
+```
 
 ## 12. Feign clients module 
 
@@ -312,29 +353,30 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
 ### 1. What is JIB 
 
    * `JIB` is a maven plugin that allows you to create a Docker image for your app.
-   * Go check my blog [post](https://www.miliari.me/blog/dockerizing-spring-boot-app-with-jib) about Jib to see more details.
+   * Go check my blog [post](https://www.miliari.me/blog/dockerizing-spring-boot-app-with-jib) about Jib to see more details about google plugin.
 
 ### 2. Setup JIB 
 
    * Add JIB dependency in **`pom.xml`** of the whole microservice using `profiles` tag :
-    ```
-    <profiles>
-        <profile>
-            <id>jib-build-push-docker-image</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.google.cloud.tools</groupId>
-                        <artifactId>jib-maven-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-    ```
+    
+```yaml
+<profiles>
+    <profile>
+        <id>jib-build-push-docker-image</id>
+        <activation>
+            <activeByDefault>false</activeByDefault>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+</profiles>
+```
 
    * We should also configure `**docker-jib**` in the parent module by specifying java image and its version, as well as the goal of the build (check pom.xml of the parent module).
    * Create a new docker config file for the application to be matched with the images of each microservice.
@@ -357,7 +399,10 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
    * The K8S cluster is divided in two nodes : **_master node_** and **_worker nodes_**.
    * **`The master node`** is the node that is responsible for managing the cluster (brain of the cluster), where all the decisions are made.
    * **`The worker nodes`** are the nodes that are responsible for running the applications.
-   ![k8s-cluster.png](docs/images/k8s-cluster.png)
+
+<p align="center">
+    <img src="docs/images/k8s-cluster.png" alt="k8s-cluster">
+</p>
 
 - To deploy our microservices to Kubernetes, we need to create deployment and service for each microservice.
 
@@ -369,7 +414,11 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
 ### 3. What are Services in k8s
 
    * Service manifest in k8s define how we can access the application.
-   ![k8s-services.png](docs/images/k8s-services.png)
+
+<p align="center">
+    <img src="docs/images/k8s-services.png" alt="k8s-services">
+</p>
+
    * For testing purposes, we can use port forwarding to access the application.
    * There's different types of services :
        * ClusterIP
@@ -470,39 +519,48 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
 ### 3. Setup monitoring configuration 
 
    1. Add "micrometer" and "prometheus" to the dependencies of microservices :
-      ```
-      <dependency>
-           <groupId>org.springframework.boot</groupId>
-           <artifactId>spring-boot-starter-actuator</artifactId>
-      </dependency>
-      ```
+      
+```yaml
+<dependency>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
 
-      ```
-      <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.9.2</version>
-      </dependency>
-      ```
+```yaml
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-registry-prometheus</artifactId>
+    <version>1.9.2</version>
+</dependency>
+```
       
    2. Add endpoints configuration to the application.yml :
-      ```
-      management:
-        endpoints:
-          web:
-              exposure:
-                   include: "*"
-        endpoint:
-           health:
-              show-details: always
-      ```
+      
+```yaml
+management:
+endpoints:
+  web:
+      exposure:
+           include: "*"
+endpoint:
+   health:
+      show-details: always
+```
 
    3. Add docker images to docker compose.
+
+   4. Monitoring diagram :
+
+<p align="center">
+    <img src="docs/diagrams/monitoring-diagram.png" alt="monitoring diagram">
+</p>
 
 
 ## 18. deploy microservices to EKS cluster using git actions
 
 ### 1. Create deploy workflow 
+
    1. login to docker hub
    2. maven clean package & push custom image to docker hub
    3. update images version on deployments services manifests and commit changes 
@@ -515,26 +573,27 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
 
 ### 3. Add database username & password to deployment.yaml file as secrets 
 
-       ```yaml
-       env:
-         - name: SPRING_PROFILES_ACTIVE
-           value: eks
-         - name: DB_USERNAME
-           valueFrom:
-              secretKeyRef:
-                name: dbsecretd
-                key: db_username
-        - name: DB_PASSWORD
-           valueFrom:
-              secretKeyRef:
-                name: dbsecret
-                key: db_password
-        ```
+```yaml
+env:
+- name: SPRING_PROFILES_ACTIVE
+   value: eks
+- name: DB_USERNAME
+   valueFrom:
+      secretKeyRef:
+        name: dbsecretd
+        key: db_username
+- name: DB_PASSWORD
+   valueFrom:
+      secretKeyRef:
+        name: dbsecret
+        key: db_password
+```
 
 ### 4. Add secrets to eks cluster using command line locally 
    1. Install kubectl : [link](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/)
    2. Install aws cli : [link](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
    3. Configure and credential file settings in local machine : [link](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
+
       ```
       [default]
       aws_access_key_id=AKIAIOSFODNN7EXAMPLE
@@ -558,4 +617,7 @@ OrdersResponse ordersResponse = restTemplate.postForObject(
    9. Add secrets :
       > kubectl create secret generic dbsecret --from-literal=db_username=your-db-username --from-literal=db_password=your-db-password
       * db_username & db_password are environment variables in our eks-application.yml files.
-      
+
+## 19. Deployment workflow diagram
+
+![deployment workflow](docs/diagrams/deploy-workflow-diagram.png)

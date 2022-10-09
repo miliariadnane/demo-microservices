@@ -89,7 +89,7 @@ jobs:
     - name: update kube config
       run: aws eks update-kubeconfig --name demo-microservices --region ca-central-1
 
-    - name: deploy customer service
+    - name: deploy to AWS EKS
       run: |
         kubectl apply -f k8s/aws-eks/services/customer/deployment.yml
         kubectl apply -f k8s/aws-eks/services/product/deployment.yml
