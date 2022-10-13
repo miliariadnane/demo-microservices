@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+  name: notification
+  namespace: default
+spec:
+  endpoints:
+    - interval: 30s
+      port: http
+      path: '/notification/actuator/prometheus'
+  selector:
+    matchLabels:
+      app: notification
