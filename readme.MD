@@ -70,6 +70,7 @@ Over the demonstration and documentation, we will cover a bunch of concepts in t
   - [5. Deploy Postgres RabbitMQ & Zipkin to K8S](#5-deploy-postgres-rabbitmq--zipkin-to-k8s)
   - [6. No need for Gateway anymore](#6-no-need-for-gateway-anymore)
   - [7. No need for Service Discovery also](#7-no-need-for-service-discovery-also)
+  - [8. Ingress](#8-ingress)
 - [15. Configure AWS EKS cluster](#15-configuring-aws-eks-cluster)
   - [1. What is EKS](#1-what-is-eks)
   - [2. Setup EKS (solution 1)]()
@@ -473,6 +474,18 @@ public class NotificationConsumer {
      * [link 1](https://www.densify.com/kubernetes-autoscaling/kubernetes-service-discovery#:~:text=One%20way%20Kubernetes%20provides%20service,of%20pods%20in%20an%20application.)
      * [link 2](https://medium.com/avmconsulting-blog/service-discovery-for-microservices-with-kubernetes-bf4353953553)
 
+### 8. Ingress
+
+   * Kubernetes Ingress is an API object that provides routing rules to manage external users access to the services in a Kubernetes cluster.
+   * Ingress can provide load balancing, SSL termination and name-based virtual hosting.
+   * We must add ingress in our kubernetes minikube cluster to access our services from outside the cluster by specifying the customized path and host name for each microservice, also to manage load balancing.
+
+   To read more about ingress, you can check k8s documentation : [Ingress k8s doc](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+
+<p align="center">
+    <img src="docs/images/ingress.jpg" alt="k8s ingress">
+</p>
+
 ## 15. Configure AWS EKS cluster 
 
 ### 1. What is EKS 
@@ -555,7 +568,6 @@ endpoint:
 <p align="center">
     <img src="docs/diagrams/monitoring-diagram.png" alt="monitoring diagram">
 </p>
-
 
 ## 18. deploy microservices to EKS cluster using git actions
 
