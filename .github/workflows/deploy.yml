@@ -96,5 +96,3 @@ jobs:
         kubectl apply -f k8s/aws-eks/services/order/deployment.yml
         kubectl apply -f k8s/aws-eks/services/notification/deployment.yml
         kubectl apply -f k8s/aws-eks/services/payment/deployment.yml
-        
-      
