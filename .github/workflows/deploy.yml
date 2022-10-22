@@ -87,7 +87,7 @@ jobs:
         aws-region: ca-central-1
 
     - name: update kube config
-      run: aws eks update-kubeconfig --name demo-microservices --region ca-central-1
+      run: aws eks update-kubeconfig --name demo-microservices --region us-east-1
 
     - name: deploy to AWS EKS
       run: |

@@ -19,7 +19,7 @@ spring:
   application:
     name: order
   datasource:
-    url: jdbc:postgresql://aws-rds-db.cllttiutrcg0.us-east-1.rds.amazonaws.com:5432/orders
+    url: jdbc:postgresql://demo-microservices.csetxdk14qax.us-east-1.rds.amazonaws.com:5432/orders
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   zipkin:
