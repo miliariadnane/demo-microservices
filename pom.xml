@@ -19,7 +19,7 @@
     <module>feign-clients</module>
   </modules>
     
-  <name>ecomicroservices</name>
+  <name>demo-microservices</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
     
