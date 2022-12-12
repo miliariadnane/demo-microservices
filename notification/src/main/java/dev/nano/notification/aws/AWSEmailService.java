@@ -5,6 +5,7 @@ import com.amazonaws.services.simpleemail.model.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/*
 @Service
 @AllArgsConstructor
 public class AWSEmailService {
@@ -28,3 +29,5 @@ public class AWSEmailService {
         }
     }
 }
+
+ */

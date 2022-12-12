@@ -9,7 +9,7 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-
+/*
 @Configuration
 public class AWSConfig {
     private Environment environment;
@@ -34,3 +34,4 @@ public class AWSConfig {
                 .build();
     }
 }
+ */

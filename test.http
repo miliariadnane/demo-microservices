@@ -1,0 +1,44 @@
+// Get customer with id 1
+GET http://localhost:8001/customer/api/v1/customers/1
+Accept: application/json
+Content-Type: application/json
+###
+// Add new customer
+POST http://localhost:8001/customer/api/v1/customers/add
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Youssef blablaconf",
+  "email": "youssef.blablaconf@gmail.com",
+  "phone": "0666887799",
+  "address": "Errachidia, MA"
+}
+###
+// Get cutomer orders
+POST http://localhost:8001/customer/api/v1/customers/orders
+Accept: application/json
+Content-Type: application/json
+
+{
+    "customerId": 1,
+    "productId": 1,
+    "customerName": "Adnane Miliari",
+    "customerEmail": "miliari.adnane@gmail.com",
+    "amount": 200
+}
+###
+// Get cutomer payments
+POST http://localhost:8001/customer/api/v1/customers/payment
+Accept: application/json
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "customerName": "Adnane Miliari",
+  "customerEmail": "miliari.adnane@gmail.com",
+  "orderId": 1
+}
+
+
+
