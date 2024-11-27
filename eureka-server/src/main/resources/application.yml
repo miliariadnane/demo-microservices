@@ -21,3 +21,7 @@ eureka:
   client:
     fetch-registry: false
     register-with-eureka: false
+logging:
+  pattern:
+    # Logging pattern containing traceId and spanId; no longer provided through Sleuth by default
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

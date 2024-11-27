@@ -22,7 +22,7 @@ public class AWSConfig {
     private static final String SECRET_KEY_BUCKET = "ACCESS_KEY_BUCKET";
 
     @Bean
-    public AmazonSimpleEmailService emailService() {
+    AmazonSimpleEmailService emailService() {
         AWSCredentials awsCredentials = new BasicAWSCredentials(
             environment.getRequiredProperty(ACCESS_KEY_BUCKET),
             environment.getRequiredProperty(SECRET_KEY_BUCKET)

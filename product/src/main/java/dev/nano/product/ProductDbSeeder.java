@@ -20,8 +20,7 @@ public class ProductDbSeeder {
 
                 String name = faker.commerce().productName();
                 int price = faker.random().nextInt(100, 1000);
-                String productImageUrl = String.format(
-                        "https://picsum.photos/id/%s/200/200",
+                String productImageUrl = "https://picsum.photos/id/%s/200/200".formatted(
                         faker.random().nextInt(1, 1000)
                 );
 

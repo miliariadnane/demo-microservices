@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>dev.nano</groupId>
   <artifactId>demo-microservices</artifactId>
@@ -18,29 +18,29 @@
     <module>amqp</module>
     <module>feign-clients</module>
   </modules>
-    
+
   <name>demo-microservices</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
-    
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <maven.compiler.version>3.8.0</maven.compiler.version>
-    <lombok.version>1.18.22</lombok.version>
-    <map.struct.version>1.4.2.Final</map.struct.version>
-    <jib.maven.plugin.version>3.2.0</jib.maven.plugin.version>
+    <maven.compiler.version>3.11.0</maven.compiler.version>
+    <lombok.version>1.18.36</lombok.version>
+    <map.struct.version>1.5.5.Final</map.struct.version>
+    <jib.maven.plugin.version>3.4.0</jib.maven.plugin.version>
     <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
-    <spring.boot.maven.plugin.version>2.6.4</spring.boot.maven.plugin.version>
-    <spring.boot.dependencies.version>2.6.4</spring.boot.dependencies.version>
-    <spring.cloud.dependencies.version>2021.0.3</spring.cloud.dependencies.version>
+    <spring.boot.maven.plugin.version>3.3.6</spring.boot.maven.plugin.version>
+    <spring.boot.dependencies.version>3.3.6</spring.boot.dependencies.version>
+    <spring.cloud.dependencies.version>2023.0.4</spring.cloud.dependencies.version>
     <image>miliariadnane/${project.artifactId}</image>
     <image.custom.tag/>
   </properties>
-    
+
   <!--  All sub-module can pick one of list spring dependencies in there pom.xml -->
-    
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -58,7 +58,7 @@
         <type>pom</type>
       </dependency>
     </dependencies>
-      
+
   </dependencyManagement>
   <!--  Apply for all sub-module by default auto imported dependency below in pom.xml-->
   <dependencies>
@@ -75,7 +75,7 @@
       <artifactId>spring-boot-starter-test</artifactId>
     </dependency>
   </dependencies>
-    
+
   <build>
     <!--  Apply all sub-module can pick one of list plugins in their pom.xml -->
     <pluginManagement>
@@ -96,16 +96,38 @@
         </plugin>
       </plugins>
     </pluginManagement>
-        
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.13.0</version>
         <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
+          <release>17</release>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.openrewrite.maven</groupId>
+        <artifactId>rewrite-maven-plugin</artifactId>
+        <version>5.45.1</version>
+        <configuration>
+          <activeRecipes>
+            <recipe>org.openrewrite.java.spring.boot3.SpringBoot3BestPractices</recipe>
+            <recipe>org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3</recipe>
+          </activeRecipes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-spring</artifactId>
+            <version>5.23.2</version>
+          </dependency>
+          <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-migrate-java</artifactId>
+            <version>2.29.1</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>

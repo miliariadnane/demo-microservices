@@ -3,7 +3,7 @@ package dev.nano.customer;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor

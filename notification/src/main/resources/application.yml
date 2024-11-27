@@ -19,7 +19,7 @@ spring:
   application:
     name: notification
   datasource:
-    url: jdbc:postgresql://localhost:5432/customer
+    url: jdbc:postgresql://localhost:5432/notification
     username: postgres
     password: password
   zipkin:
@@ -48,4 +48,8 @@ rabbitmq:
   queue:
     notification: notification.queue
   routing-key:
-    internal-notification: internal.notification.routing-key # how to bind the queue to the exchange
+    internal-notification: internal.notification.routing-key
+logging:
+  pattern:
+    # Logging pattern containing traceId and spanId; no longer provided through Sleuth by default
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]" # how to bind the queue to the exchange

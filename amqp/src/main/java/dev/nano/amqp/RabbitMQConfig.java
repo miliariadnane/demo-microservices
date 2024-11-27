@@ -9,6 +9,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class RabbitMQConfig {
@@ -26,18 +27,18 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue notificationQueue() {
+    Queue notificationQueue() {
         return new Queue(this.notificationQueue);
     }
 
     @Bean
-    public TopicExchange internalExchange() {
+    TopicExchange internalExchange() {
         return new TopicExchange(this.internalExchange);
     }
 
     // bind queue to exchange with routing key
     @Bean
-    public Binding binding() {
+    Binding binding() {
         return BindingBuilder
                 .bind(notificationQueue())
                 .to(internalExchange())
@@ -45,8 +46,9 @@ public class RabbitMQConfig {
     }
 
     // Configure amqp template that allows to send messages
+    @Primary
     @Bean
-    public AmqpTemplate amqpTemplate() {
+    AmqpTemplate amqpTemplate() {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jacksonConverter());
         return rabbitTemplate;
@@ -55,7 +57,7 @@ public class RabbitMQConfig {
     //Build the rabbit listener container & connect to RabbitMQ broker to listener message
     // that allows to consume messages from queues (listener)
     @Bean
-    public SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory() {
+    SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory() {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setMessageConverter(jacksonConverter());
@@ -64,7 +66,7 @@ public class RabbitMQConfig {
 
     // Jackson2JsonMessageConverter is used to convert messages to JSON format
     @Bean
-    public MessageConverter jacksonConverter() {
+    MessageConverter jacksonConverter() {
         MessageConverter jackson2JsonMessageConverter = new Jackson2JsonMessageConverter();
         return jackson2JsonMessageConverter;
     }
