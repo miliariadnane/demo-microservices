@@ -1,13 +1,3 @@
-#Server
-server:
-  port: 8761
-
-#Spring
-spring:
-  application:
-    name: eureka-server
-
-#Management
 management:
   observations:
     key-values:
@@ -27,13 +17,30 @@ management:
     health:
       show-details: always
 
-#Eureka-Server
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${spring.application.name}
+    username: postgres
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+    open-in-view: false
+  rabbitmq:
+    addresses: localhost:5672
+
 eureka:
   client:
-    fetch-registry: false
-    register-with-eureka: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
 
-#Logging
 logging:
   pattern:
     correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

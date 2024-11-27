@@ -1,46 +1,17 @@
-#Server
 server:
   port: 8004
   servlet:
     context-path: /notification
   error:
     include-message: always
-#Management
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
-#Spring
+
 spring:
   application:
     name: notification
-  datasource:
-    url: jdbc:postgresql://localhost:5432/notification
-    username: postgres
-    password: password
-  zipkin:
-    baseUrl: http://localhost:9411
-  rabbitmq:
-    addresses: localhost:5672 # not http, because is a message queue protocol
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: true
-#Eureka-Client
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
+  config:
+    import:
+      - classpath:shared-application-${spring.profiles.active}.yml
+
 #RabbitMQ
 rabbitmq:
   exchange:
@@ -49,7 +20,3 @@ rabbitmq:
     notification: notification.queue
   routing-key:
     internal-notification: internal.notification.routing-key
-logging:
-  pattern:
-    # Logging pattern containing traceId and spanId; no longer provided through Sleuth by default
-    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]" # how to bind the queue to the exchange

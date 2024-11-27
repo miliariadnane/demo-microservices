@@ -5,8 +5,19 @@ server:
     context-path: /notification
   error:
     include-message: always
+
 #Management
 management:
+  observations:
+    key-values:
+      application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+    enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
   endpoints:
     web:
       exposure:
@@ -14,6 +25,7 @@ management:
   endpoint:
     health:
       show-details: always
+
 #Spring
 spring:
   application:
@@ -22,8 +34,6 @@ spring:
     url: jdbc:postgresql://demo-microservices.csetxdk14qax.us-east-1.rds.amazonaws.com:5432/notification
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-  zipkin:
-    baseUrl: http://zipkin:9411
   rabbitmq:
     addresses: rabbitmq:5672
   jpa:
@@ -34,6 +44,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
+
 #RabbitMQ
 rabbitmq:
   exchange:

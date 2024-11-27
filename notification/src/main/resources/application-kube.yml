@@ -5,8 +5,19 @@ server:
     context-path: /notification
   error:
     include-message: always
+
 #Management
 management:
+  observations:
+    key-values:
+      application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+    enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
   endpoints:
     web:
       exposure:
@@ -14,6 +25,7 @@ management:
   endpoint:
     health:
       show-details: always
+
 #Spring
 spring:
   application:
@@ -34,6 +46,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
+
 #Eureka-Client
 eureka:
   client:
@@ -42,6 +55,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     enabled: false
+
 #RabbitMQ
 rabbitmq:
   exchange:
