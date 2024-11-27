@@ -10,6 +10,11 @@ spring:
     password: password
   rabbitmq:
     addresses: rabbitmq:5672
+  sql:
+    init:
+      mode: always
+      data-locations: classpath*:db/data.sql
+      platform: postgresql
 
 eureka:
   client:

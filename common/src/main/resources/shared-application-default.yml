@@ -31,6 +31,12 @@ spring:
         format_sql: true
     show-sql: true
     open-in-view: false
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+      data-locations: classpath*:db/data.sql
+      platform: postgresql
   rabbitmq:
     addresses: localhost:5672
 
