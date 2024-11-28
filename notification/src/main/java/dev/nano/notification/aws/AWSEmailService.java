@@ -2,12 +2,15 @@ package dev.nano.notification.aws;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
+import dev.nano.notification.email.EmailService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class AWSEmailService {
+@Profile("eks")
+public class AWSEmailService implements EmailService {
 
     private final AmazonSimpleEmailService emailService;
 

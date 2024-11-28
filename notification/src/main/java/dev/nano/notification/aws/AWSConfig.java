@@ -8,11 +8,13 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 @Configuration
+@Profile("eks")
 public class AWSConfig {
-    private Environment environment;
+    private final Environment environment;
 
     public AWSConfig(Environment environment) {
         this.environment = environment;
