@@ -1,0 +1,57 @@
+services:
+  postgres:
+    container_name: postgres-local
+    image: postgres:15.5-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - postgres-local:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres-local
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin-local
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin-local:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - postgres-local
+    restart: unless-stopped
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin-local
+    ports:
+      - "9411:9411"
+    networks:
+      - spring-local
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq-local
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - spring-local
+
+networks:
+  postgres-local:
+    driver: bridge
+  spring-local:
+    driver: bridge
+
+volumes:
+  postgres-local:
+  pgadmin-local:
