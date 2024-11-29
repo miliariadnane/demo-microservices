@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
  * 4. Handle service failures with circuit breaker
  */
 
-@Service("main-checker-manager")
+@Service("main-checker")
 @AllArgsConstructor
 @Slf4j
 public class ApiKeyManagerAuthorizationChecker implements ApiKeyAuthorizationChecker {

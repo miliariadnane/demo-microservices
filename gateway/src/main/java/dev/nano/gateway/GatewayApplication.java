@@ -11,6 +11,7 @@ import org.springframework.context.annotation.PropertySources;
 @EnableDiscoveryClient
 @EnableFeignClients(
         basePackages = "dev.nano.clients"
+
 )
 @PropertySources({
         @PropertySource("classpath:clients-${spring.profiles.active}.properties")

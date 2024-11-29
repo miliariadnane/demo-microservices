@@ -6,6 +6,9 @@ server:
 spring:
   application:
     name: gateway
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
   cloud:
     gateway:
       routes:

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @FeignClient(name = "apiKey-manager", url = "${clients.apiKey-manager.url}")
 public interface ApiKeyManagerClient {
 
-    @GetMapping("/api/v1/apiKey-manager/api-keys/{apiKey}/applications/{applicationName}/authorization")
+    @GetMapping("{apiKey}/applications/{applicationName}/authorization")
     ApiKeyManagerResponse isKeyAuthorizedForApplication(
             @PathVariable("apiKey") String apiKey,
             @PathVariable("applicationName") String applicationName);
