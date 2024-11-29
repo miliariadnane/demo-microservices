@@ -1,0 +1,14 @@
+openapi:
+  title: Microservices API Documentation
+  version: 1.0
+  description: Documentation for all microservices endpoints
+  contact:
+    name: Adnane MILIARI
+    email: miliari.adnane@gmail.com
+    url: https://github.com/miliariadnane
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  external-docs:
+    description: Project Documentation
+    url: https://github.com/miliariadnane/demo-microservices

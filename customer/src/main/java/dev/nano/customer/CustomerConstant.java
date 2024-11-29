@@ -1,5 +1,8 @@
 package dev.nano.customer;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class CustomerConstant {
     public static final String CUSTOMER_URI_REST_API = "/api/v1/customers";
     public static final String CUSTOMER_NOT_FOUND = "Customer with ID %d not found";

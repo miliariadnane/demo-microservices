@@ -1,6 +1,7 @@
 #Server
 server:
   port: 8006
+
 #Management
 management:
   endpoints:
@@ -10,6 +11,7 @@ management:
   endpoint:
     health:
       show-details: always
+      
 #Spring
 spring:
   application:

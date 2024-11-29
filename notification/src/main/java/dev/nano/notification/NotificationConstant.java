@@ -1,5 +1,8 @@
 package dev.nano.notification;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class NotificationConstant {
     public static final String NOTIFICATION_URI_REST_API = "/api/v1/notifications";
     public static final String NOTIFICATION_NOT_FOUND = "Notification with ID %d not found";
