@@ -1,7 +1,5 @@
 server:
   port: 8005
-  servlet:
-    context-path: /payment
   error:
     include-message: always
 

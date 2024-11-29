@@ -1,7 +1,5 @@
 server:
   port: 8003
-  servlet:
-    context-path: /order
   error:
     include-message: always
 

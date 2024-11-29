@@ -1,0 +1,18 @@
+package dev.nano.clients.apiKeyManager.apiKey;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+
+@FeignClient(name = "apiKey-manager", url = "${clients.apiKey-manager.url}")
+public interface ApiKeyManagerClient {
+
+    @GetMapping("/api/v1/apiKey-manager/api-keys/{apiKey}/applications/{applicationName}/authorization")
+    ApiKeyManagerResponse isKeyAuthorizedForApplication(
+            @PathVariable("apiKey") String apiKey,
+            @PathVariable("applicationName") String applicationName);
+
+    @PutMapping("/api/v1/apiKey-manager/api-keys/{apiKey}/revoke")
+    void revokeKey(@PathVariable("apiKey") String apiKey);
+}

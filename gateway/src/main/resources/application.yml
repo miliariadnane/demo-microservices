@@ -1,54 +1,49 @@
 #Server
 server:
-  port: 8006
+  port: 8765
 
-#Management
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
-      
 #Spring
 spring:
   application:
     name: gateway
-  zipkin:
-    base-url: http://localhost:9411
   cloud:
     gateway:
       routes:
         - id: customer
           uri: lb://CUSTOMER # lb = load balancer
           predicates:
-              - Path=/customer/api/v1/customers/**
+            - Path=/api/v1/customers/**
         - id: product
           uri: lb://PRODUCT
           predicates:
-              - Path=/product/api/v1/products/**
+            - Path=/api/v1/products/**
         - id: order
           uri: lb://ORDER
           predicates:
-              - Path=/order/api/v1/orders/**
+            - Path=/api/v1/orders/**
         - id: payment
           uri: lb://PAYMENT
           predicates:
-            - Path=/payment/api/v1/payments/**
+            - Path=/api/v1/payments/**
         - id: notification
           uri: lb://NOTIFICATION
           predicates:
-              - Path=/notification/api/v1/notifications/**
-#Eureka-Client
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
-logging:
-  pattern:
-    # Logging pattern containing traceId and spanId; no longer provided through Sleuth by default
-    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+            - Path=/api/v1/notifications/**
+        - id: apiKey-manager
+          uri: lb://APIKEY-MANAGER
+          predicates:
+            - Path=/api/v1/apiKey-manager/**
+  config:
+    import:
+      - classpath:shared-application-${spring.profiles.active}.yml
+
+#Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      apiKeyAuthorization:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50

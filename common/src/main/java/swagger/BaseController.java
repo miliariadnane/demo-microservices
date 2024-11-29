@@ -14,4 +14,8 @@ public class BaseController {
     public static final String PAYMENT_DESCRIPTION = "Operations for managing payments and transactions";
     public static final String NOTIFICATION_TAG = "Notification Management";
     public static final String NOTIFICATION_DESCRIPTION = "Operations for managing notifications and communication with customers";
+    public static final String API_KEY_TAG = "API Key Management";
+    public static final String API_KEY_DESCRIPTION = "Operations for managing API keys and their authorizations";
+    public static final String APPLICATION_TAG = "Application Management";
+    public static final String APPLICATION_DESCRIPTION = "Operations for managing application access and permissions";
 }
