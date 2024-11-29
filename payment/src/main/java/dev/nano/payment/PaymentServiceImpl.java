@@ -4,16 +4,22 @@ import dev.nano.amqp.RabbitMQProducer;
 import dev.nano.clients.notification.NotificationRequest;
 import dev.nano.clients.order.OrderClient;
 import dev.nano.clients.payment.PaymentRequest;
+import exceptionhandler.business.NotificationException;
+import exceptionhandler.business.PaymentException;
+import exceptionhandler.core.ResourceNotFoundException;
+import feign.FeignException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static dev.nano.payment.PaymentConstant.PAYMENT_NOT_FOUND_EXCEPTION;
+import static dev.nano.payment.PaymentConstant.*;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
@@ -23,42 +29,61 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentDTO getPayment(Long paymentId) {
-        PaymentEntity payment = paymentRepository.findById(paymentId).orElseThrow(() ->
-                new IllegalStateException(PAYMENT_NOT_FOUND_EXCEPTION));
-
-        return paymentMapper.toDTO(payment);
+        return paymentRepository.findById(paymentId)
+                .map(paymentMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(PAYMENT_NOT_FOUND, paymentId)
+                ));
     }
 
     @Override
     public List<PaymentDTO> getAllPayments() {
-        List<PaymentEntity> paymentList = paymentRepository.findAll();
-        return paymentMapper.toListDTO(paymentList);
+        List<PaymentEntity> payments = paymentRepository.findAll();
+        if (payments.isEmpty()) {
+            throw new ResourceNotFoundException(NO_PAYMENTS_FOUND);
+        }
+        return paymentMapper.toListDTO(payments);
     }
 
     @Override
-    public PaymentDTO createPayment(PaymentRequest payment) {
+    public PaymentDTO createPayment(PaymentRequest paymentRequest) {
+        try {
+            // Verify order exists
+            orderClient.getOrder(paymentRequest.getOrderId());
 
-        // find order
-        orderClient.getOrder(payment.getOrderId());
+            PaymentEntity payment = PaymentEntity.builder()
+                    .customerId(paymentRequest.getCustomerId())
+                    .orderId(paymentRequest.getOrderId())
+                    .createAt(LocalDateTime.now())
+                    .build();
 
-        // add new payment
-        PaymentEntity paymentEntity = paymentRepository.save(PaymentEntity.builder()
-                .customerId(payment.getCustomerId())
-                .orderId(payment.getOrderId())
-                .createAt(LocalDateTime.now()).build());
+            PaymentEntity savedPayment = paymentRepository.save(payment);
+            sendPaymentNotification(paymentRequest);
 
-        // create notification request
-        NotificationRequest notificationRequest = NotificationRequest.builder()
-                .customerId(payment.getCustomerId())
-                .customerName(payment.getCustomerName())
-                .customerEmail(payment.getCustomerEmail())
-                .sender("nanodev")
-                .message("Your payment passed successfully. Thank you")
-                .build();
+            return paymentMapper.toDTO(savedPayment);
+        } catch (FeignException e) {
+            throw new PaymentException(String.format(PAYMENT_CREATE_ERROR, e.getMessage()));
+        }
+    }
 
-        // publishing notification to rabbitmq
-        rabbitMQProducer.publish("internal.exchange", "internal.notification.routing-key", notificationRequest);
+    private void sendPaymentNotification(PaymentRequest payment) {
+        try {
+            NotificationRequest notificationRequest = NotificationRequest.builder()
+                    .customerId(payment.getCustomerId())
+                    .customerName(payment.getCustomerName())
+                    .customerEmail(payment.getCustomerEmail())
+                    .sender("nanodev")
+                    .message("Your payment has been processed successfully")
+                    .build();
 
-        return paymentMapper.toDTO(paymentEntity);
+            rabbitMQProducer.publish(
+                    "internal.exchange",
+                    "internal.notification.routing-key",
+                    notificationRequest
+            );
+        } catch (Exception e) {
+            log.error("Failed to send payment notification: {}", e.getMessage());
+            throw new NotificationException("Failed to send payment notification");
+        }
     }
 }

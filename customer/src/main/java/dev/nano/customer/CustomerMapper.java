@@ -1,15 +1,14 @@
 package dev.nano.customer;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
-
-        CustomerEntity toEntity(CustomerDTO dto);
-        List<CustomerEntity> toListEntity(List<CustomerDTO> listDTO);
-        CustomerDTO toDTO(CustomerEntity entity);
-        List<CustomerDTO> toListDTO(List<CustomerEntity> listEntity);
-
+    CustomerDTO toDTO(CustomerEntity entity);
+    CustomerEntity toEntity(CustomerDTO dto);
+    List<CustomerDTO> toListDTO(List<CustomerEntity> listEntity);
+    void updateCustomerFromDTO(CustomerDTO dto, @MappingTarget CustomerEntity entity);
 }

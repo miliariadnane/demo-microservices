@@ -1,15 +1,16 @@
 package dev.nano.product;
 
+import exceptionhandler.business.ProductException;
+import exceptionhandler.core.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static dev.nano.product.ProductConstant.PRODUCT_NOT_FOUND_EXCEPTION;
+import static dev.nano.product.ProductConstant.*;
 
 @Service
 @AllArgsConstructor
@@ -17,46 +18,67 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+
     @Override
     public ProductDTO getProduct(long productId) {
-        ProductEntity product = productRepository.findById(productId).orElseThrow(() ->
-                new IllegalStateException(PRODUCT_NOT_FOUND_EXCEPTION));
-
-        return productMapper.toDTO(product);
+        return productRepository.findById(productId)
+                .map(productMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(PRODUCT_NOT_FOUND, productId)
+                ));
     }
 
     @Override
     public List<ProductDTO> getAllProducts(int page, int limit, String search) {
-        if(page > 0) page = page - 1; /* page starts at 1, so we need to subtract 1 because page starts at 0 */
+        if(page > 0) page = page - 1;
 
-        List<ProductDTO> productDTOList = new ArrayList<>();
         Pageable pageableRequest = PageRequest.of(page, limit);
-        Page<ProductEntity> productDTOPage;
+        Page<ProductEntity> productPage;
 
         if(search == null || search.isEmpty()) {
-            productDTOPage = productRepository.findAllProducts(pageableRequest);
+            productPage = productRepository.findAllProducts(pageableRequest);
         } else {
-            productDTOPage = productRepository.findAllProductsByCriteria(pageableRequest, search);
+            productPage = productRepository.findAllProductsByCriteria(pageableRequest, search);
         }
 
-        List<ProductEntity> products = productDTOPage.getContent();
-        productDTOList.addAll(productMapper.toListDTO(products));
+        List<ProductEntity> products = productPage.getContent();
+        if (products.isEmpty()) {
+            throw new ResourceNotFoundException(NO_PRODUCTS_FOUND);
+        }
 
-        return productDTOList;
+        return productMapper.toListDTO(products);
     }
 
     @Override
-    public ProductDTO create(ProductDTO product) {
-        return null;
+    public ProductDTO create(ProductDTO productDTO) {
+        try {
+            ProductEntity product = productMapper.toEntity(productDTO);
+            return productMapper.toDTO(productRepository.save(product));
+        } catch (Exception e) {
+            throw new ProductException(String.format(PRODUCT_CREATE_ERROR, e.getMessage()));
+        }
     }
 
     @Override
-    public ProductDTO update(long id, ProductDTO product) {
-        return null;
+    public ProductDTO update(long id, ProductDTO productDTO) {
+        ProductEntity existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(PRODUCT_NOT_FOUND, id)
+                ));
+
+        productMapper.updateProductFromDTO(productDTO, existingProduct);
+        return productMapper.toDTO(productRepository.save(existingProduct));
     }
 
     @Override
     public void delete(long id) {
-
+        if (!productRepository.existsById(id)) {
+            throw new ResourceNotFoundException(String.format(PRODUCT_NOT_FOUND, id));
+        }
+        try {
+            productRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new ProductException(String.format(PRODUCT_DELETE_ERROR, e.getMessage()));
+        }
     }
 }
