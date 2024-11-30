@@ -2,6 +2,7 @@ package dev.nano.gateway.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.route.Route;
@@ -19,6 +20,9 @@ import java.util.List;
 @Component
 public class ApiAuthorizationFilter implements GlobalFilter, Ordered {
 
+    @Value("${spring.security.api-key.enabled:true}")
+    private boolean apiKeyEnabled;
+
     final ApiKeyAuthorizationChecker apiKeyAuthorizationChecker;
 
     @Autowired
@@ -30,6 +34,9 @@ public class ApiAuthorizationFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        if (!apiKeyEnabled) {
+            return chain.filter(exchange);
+        }
 
         Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
         String applicationName = route.getId();
@@ -47,6 +54,6 @@ public class ApiAuthorizationFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE; // lowest priority filter
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

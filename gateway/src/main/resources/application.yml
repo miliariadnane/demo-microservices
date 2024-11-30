@@ -9,6 +9,9 @@ spring:
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
+  security:
+    api-key:
+      enabled: false
   cloud:
     gateway:
       routes:
