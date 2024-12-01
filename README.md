@@ -19,16 +19,40 @@
 
 Link to the documentation and guide website : [demo-microservices](https://miliariadnane.gitbook.io/demo-microservices) 
 
+#### Table of Contents
+```text
+├── Overview
+├── Setup a Microservice Project from Scratch
+├── Microservices 101
+│   ├── Service Discovery with Netflix Eureka
+│   ├── Communication Between Microservices
+│   │   ├── Synchronous Communication
+│   │   └── Asynchronous Communication
+│   ├── API Gateway
+│   │   ├── Load Balancing
+│   │   └── Security
+│   │       ├── API Key Manager
+│   │       └── Authentication
+│   ├── Cloud Native Deployment
+│   │   ├── Containerization with Docker & Jib
+│   │   └── Container Orchestration with Kubernetes
+│   └── Monitoring
+│       ├── Distributed Tracing with Sleuth & Zipkin
+│       └── Prometheus & Grafana
+└── Microservices 102
+    ├── Service Discovery Deep Dive
+    ├── Resiliency
+    └── Cloud Deployment with AWS
+```
+
 ## Support
 
-If you like my work, feel free to:
+Show your support by:
 
-- ⭐ this repository. And we will be happy together :)
-- 🤲 If you have a moment, don't forget to make a duaa for me and my parents.
-- 🐛️ If you find a bug, raise an issue or fix it and send a pull request.
-- 📢️ If you have any feature requests, raise an issue or send a pull request.
-
-Thanks a bunch for supporting me!
+- ⭐ Starring this repository. And we will be happy together :)
+- 🤲 Making a duaa for me and my parents
+- 🐛️ Reporting bugs or submitting pull requests to fix them
+- 📢️ Suggesting new features through issues or pull requests
 
 ## Features
 - ✅ `Service Discovery` with **Netflix Eureka**
