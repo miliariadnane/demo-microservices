@@ -69,12 +69,12 @@ Show your support by:
 - [x] Kubernetes Deployment
 - [x] AWS EKS Integration
 - [x] API Documentation with OpenAPI
-- [x] Api Key Manager for APIs security.
+- [x] Api Key Manager for APIs security
 - [x] AWS EKS Integration
-- [ ] Service Mesh Implementation
-- [ ] Frontend application with `React` or `Angular`
-- 🚧 OAuth2 Authentication with Keycloak.
-- 🚧 Resilience4j for circuit breaker and fallback
+- [x] OAuth2 Authentication with Keycloak
+- [ ] Resilience4j for circuit breaker and fallback 🚧
+- [ ] Service Mesh Implementation 🚧
+- [ ] Frontend application with `React` or `Angular` 🚧
 
 ## Technologies - Libraries
 
