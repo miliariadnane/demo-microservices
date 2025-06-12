@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 public class DefaultEmailService implements EmailService {
     @Override
     public void send(String to, String content, String subject) {
+        if (to == null || to.isBlank()) {
+            log.warn("Email sending skipped: recipient address is null or empty.");
+            return;
+        }
         log.info("Simulated email sent to: {}, subject: {}, content: {}", to, subject, content);
     }
 }

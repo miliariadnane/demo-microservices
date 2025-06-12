@@ -39,6 +39,11 @@ spring:
       platform: postgresql
   rabbitmq:
     addresses: localhost:5672
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/demo-realm
 
 eureka:
   client:
@@ -51,3 +56,8 @@ logging:
   pattern:
     correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
     level: "%5p ${logging.pattern.correlation} %c{1.} : %m%n"
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: preferred_username

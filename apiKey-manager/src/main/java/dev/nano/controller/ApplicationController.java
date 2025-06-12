@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import swagger.BaseController;
+import dev.nano.swagger.BaseController;
 
 @RestController
 @RequestMapping(path = ApplicationConstant.APPLICATION_URI_REST_API)

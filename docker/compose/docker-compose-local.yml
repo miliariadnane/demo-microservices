@@ -5,11 +5,12 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: keycloak
       PGDATA: /data/postgres
     volumes:
       - postgres-local:/data/postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - postgres-local
     restart: unless-stopped
@@ -45,6 +46,29 @@ services:
       - "15672:15672"
     networks:
       - spring-local
+
+  keycloak:
+    container_name: keycloak-local
+    image: quay.io/keycloak/keycloak:25.0.1
+    command: start-dev --import-realm
+    volumes:
+      - ../config/keycloak:/opt/keycloak/data/import
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres-local
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_URL_PORT: 5432
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: password
+    ports:
+      - "8180:8080"
+    networks:
+      - spring-local
+      - postgres-local
+    depends_on:
+      - postgres
 
 networks:
   postgres-local:

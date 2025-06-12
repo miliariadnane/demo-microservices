@@ -16,3 +16,13 @@ spring:
   sql:
     init:
       mode: never
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/demo-realm
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: preferred_username

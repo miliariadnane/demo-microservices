@@ -9,15 +9,16 @@ import dev.nano.clients.payment.PaymentClient;
 import dev.nano.clients.payment.PaymentRequest;
 import dev.nano.clients.payment.PaymentResponse;
 import dev.nano.clients.product.ProductClient;
-import exceptionhandler.business.CustomerException;
-import exceptionhandler.business.NotificationException;
-import exceptionhandler.business.OrderException;
-import exceptionhandler.business.PaymentException;
-import exceptionhandler.core.DuplicateResourceException;
-import exceptionhandler.core.ResourceNotFoundException;
+import dev.nano.exceptionhandler.business.CustomerException;
+import dev.nano.exceptionhandler.business.NotificationException;
+import dev.nano.exceptionhandler.business.OrderException;
+import dev.nano.exceptionhandler.business.PaymentException;
+import dev.nano.exceptionhandler.core.DuplicateResourceException;
+import dev.nano.exceptionhandler.core.ResourceNotFoundException;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +36,12 @@ public class CustomerServiceImpl implements CustomerService {
     private final ProductClient productClient;
     private final PaymentClient paymentClient;
     private final RabbitMQProducer rabbitMQProducer;
+
+    public boolean isSameUser(Authentication authentication, Long customerId) {
+        String username = authentication.getName();
+        CustomerEntity customer = customerRepository.findById(customerId).orElse(null);
+        return customer != null && customer.getEmail().equals(username);
+    }
 
     @Override
     public CustomerDTO getCustomer(Long id) {

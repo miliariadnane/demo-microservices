@@ -2,8 +2,8 @@ package dev.nano.notification;
 
 import dev.nano.clients.notification.NotificationRequest;
 import dev.nano.notification.email.EmailService;
-import exceptionhandler.business.NotificationException;
-import exceptionhandler.core.ResourceNotFoundException;
+import dev.nano.exceptionhandler.business.NotificationException;
+import dev.nano.exceptionhandler.core.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

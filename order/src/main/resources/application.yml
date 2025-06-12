@@ -7,5 +7,4 @@ spring:
   application:
     name: order
   config:
-    import:
-      - classpath:shared-application-${spring.profiles.active}.yml
+    import: classpath:shared-application-${spring.profiles.active}.yml

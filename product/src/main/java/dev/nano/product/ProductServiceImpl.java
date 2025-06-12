@@ -1,7 +1,7 @@
 package dev.nano.product;
 
-import exceptionhandler.business.ProductException;
-import exceptionhandler.core.ResourceNotFoundException;
+import dev.nano.exceptionhandler.business.ProductException;
+import dev.nano.exceptionhandler.core.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,7 +66,11 @@ public class ProductServiceImpl implements ProductService {
                         String.format(PRODUCT_NOT_FOUND, id)
                 ));
 
-        productMapper.updateProductFromDTO(productDTO, existingProduct);
+        existingProduct.setName(productDTO.getName());
+        existingProduct.setPrice(productDTO.getPrice());
+        existingProduct.setImage(productDTO.getImage());
+        existingProduct.setAvailableQuantity(productDTO.getAvailableQuantity());
+
         return productMapper.toDTO(productRepository.save(existingProduct));
     }
 

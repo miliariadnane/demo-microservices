@@ -37,14 +37,12 @@ public class NotificationEntity {
 
     @Column(
             name = "customer_name",
-            nullable = false,
             columnDefinition = "TEXT"
     )
     private String customerName;
 
     @Column(
             name = "customer_email",
-            nullable = false,
             columnDefinition = "TEXT"
     )
     private String customerEmail;

@@ -15,9 +15,19 @@ spring:
       mode: always
       data-locations: classpath*:db/data.sql
       platform: postgresql
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/demo-realm
 
 eureka:
   client:
     service-url:
       defaultZone: http://eureka-server:8761/eureka
     enabled: false
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: preferred_username

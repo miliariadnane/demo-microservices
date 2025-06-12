@@ -13,8 +13,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import swagger.BaseController;
+import dev.nano.swagger.BaseController;
 
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class PaymentController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{paymentId}")
+    @PreAuthorize("hasRole('app_admin')")
     public ResponseEntity<PaymentDTO> getPayment(@PathVariable("paymentId") Long paymentId) {
         log.info("Retrieving payment with id {}", paymentId);
         return ResponseEntity.ok(paymentService.getPayment(paymentId));
@@ -66,7 +68,8 @@ public class PaymentController {
             ),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('app_admin')")
     public ResponseEntity<List<PaymentDTO>> getAllPayments() {
         log.info("Retrieving all payments");
         return ResponseEntity.ok(paymentService.getAllPayments());
@@ -89,7 +92,8 @@ public class PaymentController {
             @ApiResponse(responseCode = "404", description = "Order not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/make-new-payment")
+    @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PaymentDTO> createPayment(@Valid @RequestBody PaymentRequest payment) {
         log.info("Processing new payment: {}", payment);
         return new ResponseEntity<>(

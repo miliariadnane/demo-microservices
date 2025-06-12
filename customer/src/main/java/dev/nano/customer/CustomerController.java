@@ -16,8 +16,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import swagger.BaseController;
+import dev.nano.swagger.BaseController;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{customerId}")
+    @PreAuthorize("hasRole('app_admin') or @customerServiceImpl.isSameUser(authentication, #customerId)")
     public ResponseEntity<CustomerDTO> getCustomer(@PathVariable("customerId") Long customerId) {
         log.info("Retrieving customer with ID: {}", customerId);
         return ResponseEntity.ok(customerService.getCustomer(customerId));
@@ -69,7 +71,8 @@ public class CustomerController {
             ),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('app_admin')")
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
         log.info("Retrieving all customers");
         return ResponseEntity.ok(customerService.getAllCustomers());
@@ -91,7 +94,8 @@ public class CustomerController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/add")
+    @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
         log.info("Creating new customer: {}", customerDTO);
         return new ResponseEntity<>(
@@ -118,6 +122,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PutMapping("/{customerId}")
+    @PreAuthorize("hasRole('app_admin') or @customerServiceImpl.isSameUser(authentication, #customerId)")
     public ResponseEntity<CustomerDTO> updateCustomer(
             @PathVariable Long customerId,
             @Valid @RequestBody CustomerDTO customerDTO) {
@@ -135,6 +140,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @DeleteMapping("/{customerId}")
+    @PreAuthorize("hasRole('app_admin')")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
         log.info("Deleting customer with ID: {}", customerId);
         customerService.deleteCustomer(customerId);

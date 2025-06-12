@@ -47,4 +47,11 @@ public class ProductEntity {
             columnDefinition = "INTEGER"
     )
     private Integer price;
+
+    @Column(
+            name = "available_quantity",
+            nullable = false,
+            columnDefinition = "INTEGER DEFAULT 0"
+    )
+    private Integer availableQuantity;
 }

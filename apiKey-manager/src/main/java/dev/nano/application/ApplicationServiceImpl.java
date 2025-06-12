@@ -2,7 +2,7 @@ package dev.nano.application;
 
 import dev.nano.apikey.ApiKeyEntity;
 import dev.nano.apikey.ApiKeyRepository;
-import exceptionhandler.core.ResourceNotFoundException;
+import dev.nano.exceptionhandler.core.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

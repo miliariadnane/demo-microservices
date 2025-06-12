@@ -12,10 +12,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import swagger.BaseController;
+import dev.nano.swagger.BaseController;
 
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{orderId}")
+    @PreAuthorize("hasRole('app_admin')")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable("orderId") Long orderId) {
         log.info("Retrieving order with id {}", orderId);
         return ResponseEntity.ok(orderService.getOrder(orderId));
@@ -67,7 +69,8 @@ public class OrderController {
             ),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('app_admin')")
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         log.info("Retrieving all orders");
         return ResponseEntity.ok(orderService.getAllOrders());
@@ -90,7 +93,8 @@ public class OrderController {
             @ApiResponse(responseCode = "404", description = "Product or customer not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/add")
+    @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderDTO> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
         log.info("Creating new order: {}", orderRequest);
         return new ResponseEntity<>(

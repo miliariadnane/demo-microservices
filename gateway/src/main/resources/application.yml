@@ -12,6 +12,10 @@ spring:
   security:
     api-key:
       enabled: false
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/demo-realm
   cloud:
     gateway:
       routes:
@@ -41,7 +45,7 @@ spring:
             - Path=/api/v1/apiKey-manager/**
   config:
     import:
-      - classpath:shared-application-${spring.profiles.active}.yml
+      - "classpath:shared-application-${spring.profiles.active}.yml"
 
 #Circuit Breaker
 resilience4j:

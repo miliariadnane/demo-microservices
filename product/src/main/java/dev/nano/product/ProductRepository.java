@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
-    @Query(value="SELECT * FROM products", nativeQuery=true)
+    @Query(value="SELECT * FROM product", nativeQuery=true)
     Page<ProductEntity> findAllProducts(Pageable pageableRequest);
 
-    @Query(value="SELECT * FROM products p WHERE (p.name LIKE %:search%) ", nativeQuery=true)
+    @Query(value="SELECT * FROM product p WHERE (p.name LIKE CONCAT('%', :search, '%')) ", nativeQuery=true)
     Page<ProductEntity> findAllProductsByCriteria(Pageable pageableRequest, @Param("search") String search);
 }

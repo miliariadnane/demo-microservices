@@ -12,8 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import swagger.BaseController;
+import dev.nano.swagger.BaseController;
 
 import java.util.List;
 
@@ -26,6 +27,33 @@ import static dev.nano.product.ProductConstant.PRODUCT_URI_REST_API;
 public class ProductController {
 
     private final ProductService productService;
+
+
+    @Operation(
+            summary = "Create new product",
+            description = "Add a new product to the catalog"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Product created successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ProductDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid product data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping
+    @PreAuthorize("hasRole('app_admin')")
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO) {
+        log.info("Creating new product: {}", productDTO);
+        return new ResponseEntity<>(
+                productService.create(productDTO),
+                HttpStatus.CREATED
+        );
+    }
 
     @Operation(
             summary = "Get product by ID",
@@ -74,31 +102,6 @@ public class ProductController {
     }
 
     @Operation(
-            summary = "Create new product",
-            description = "Add a new product to the catalog"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Product created successfully",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ProductDTO.class)
-                    )
-            ),
-            @ApiResponse(responseCode = "400", description = "Invalid product data"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO) {
-        log.info("Creating new product: {}", productDTO);
-        return new ResponseEntity<>(
-                productService.create(productDTO),
-                HttpStatus.CREATED
-        );
-    }
-
-    @Operation(
             summary = "Update product",
             description = "Modify existing product information"
     )
@@ -116,8 +119,9 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PutMapping("/{productId}")
+    @PreAuthorize("hasRole('app_admin')")
     public ResponseEntity<ProductDTO> updateProduct(
-            @PathVariable Long productId,
+            @PathVariable("productId") Long productId,
             @Valid @RequestBody ProductDTO productDTO) {
         log.info("Updating product with ID {}: {}", productId, productDTO);
         return ResponseEntity.ok(productService.update(productId, productDTO));
@@ -133,7 +137,8 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
+    @PreAuthorize("hasRole('app_admin')")
+    public ResponseEntity<Void> deleteProduct(@PathVariable("productId") Long productId) {
         log.info("Deleting product with ID: {}", productId);
         productService.delete(productId);
         return ResponseEntity.noContent().build();

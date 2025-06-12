@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import swagger.BaseController;
+import dev.nano.swagger.BaseController;
 
 @RestController
 @RequestMapping(path = ApiKeyConstant.API_KEY_URI_REST_API)

@@ -12,8 +12,9 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import swagger.BaseController;
+import dev.nano.swagger.BaseController;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ import static dev.nano.notification.NotificationConstant.NOTIFICATION_URI_REST_A
 @RequestMapping(path = NOTIFICATION_URI_REST_API)
 @Tag(name = BaseController.NOTIFICATION_TAG, description = BaseController.NOTIFICATION_DESCRIPTION)
 @AllArgsConstructor @Slf4j
+@PreAuthorize("hasRole('app_admin')")
 public class NotificationController {
 
     private final NotificationService notificationService;

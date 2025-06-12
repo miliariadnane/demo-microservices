@@ -105,6 +105,30 @@ services:
     restart: unless-stopped
     depends_on:
       - prometheus
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:25.0.1
+    command: start-dev --import-realm
+    volumes:
+      - ../config/keycloak:/opt/keycloak/data/import
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_URL_PORT: 5432
+      KC_DB_USERNAME: miliariadnane
+      KC_DB_PASSWORD: password
+    ports:
+      - "8180:8080"
+    networks:
+      - spring
+      - postgres
+      - monitoring
+    depends_on:
+      postgres:
+        condition: service_healthy
   node-exporter:
     image: prom/node-exporter:latest # Prometheus component that exports system metrics to Prometheus
     container_name: node-exporter
@@ -141,7 +165,7 @@ services:
     image: miliariadnane/gateway:latest
     container_name: gateway
     ports:
-      - "8006:8006"
+      - "8765:8765"
     networks:
       - spring
       - monitoring
@@ -167,6 +191,7 @@ services:
       - postgres
       - zipkin
       - rabbitmq
+      - keycloak
   product:
     image: miliariadnane/product:latest
     container_name: product
@@ -184,6 +209,7 @@ services:
       - postgres
       - zipkin
       - rabbitmq
+      - keycloak
   order:
     image: miliariadnane/order:latest
     container_name: order
@@ -201,6 +227,7 @@ services:
       - postgres
       - zipkin
       - rabbitmq
+      - keycloak
   notification:
     image: miliariadnane/notification:latest
     container_name: notification
@@ -218,6 +245,7 @@ services:
       - postgres
       - zipkin
       - rabbitmq
+      - keycloak
   payment:
     image: miliariadnane/payment:latest
     container_name: payment
@@ -235,6 +263,7 @@ services:
       - postgres
       - zipkin
       - rabbitmq
+      - keycloak
 
 networks:
   postgres:
