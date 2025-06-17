@@ -5,7 +5,9 @@ import dev.nano.application.ApplicationName;
 import dev.nano.application.ApplicationRepository;
 import dev.nano.exceptionhandler.core.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +20,7 @@ import static dev.nano.apikey.ApiKeyConstant.API_KEY_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ApiKeyServiceImpl implements ApiKeyService {
     private static final Integer EXPIRATION_DAYS = 30;
     private final ApiKeyRepository apiKeyRepository;
@@ -77,10 +80,13 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isAuthorized(String apiKey, ApplicationName applicationName) {
+        log.info("Attempting to authorize API Key: {} for Application: {}", apiKey, applicationName);
         Optional<ApiKeyEntity> optionalApiKey = apiKeyRepository.findByKeyAndApplicationName(apiKey, applicationName);
 
         if(optionalApiKey.isEmpty()) {
+            log.warn("API Key {} not found for application {}. Returning false.", apiKey, applicationName);
             return false;
         }
 

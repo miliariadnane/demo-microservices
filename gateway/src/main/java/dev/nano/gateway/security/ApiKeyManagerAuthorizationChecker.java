@@ -45,7 +45,7 @@ public class ApiKeyManagerAuthorizationChecker implements ApiKeyAuthorizationChe
         return apiKeyManagerClient.isKeyAuthorizedForApplication(
                 apiKey,
                 applicationName
-        ).isAuthorized();
+        );
     }
 
     /**

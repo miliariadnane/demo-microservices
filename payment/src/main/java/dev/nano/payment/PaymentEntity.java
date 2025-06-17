@@ -47,4 +47,9 @@ public class PaymentEntity {
             columnDefinition = "TIMESTAMP"
     )
     private LocalDateTime createAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @Builder.Default
+    private PaymentStatus status = PaymentStatus.COMPLETED;
 }

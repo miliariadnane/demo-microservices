@@ -15,7 +15,8 @@ import org.springframework.context.annotation.PropertySources;
 )
 @EnableDiscoveryClient
 @PropertySources({
-        @PropertySource("classpath:amqp-${spring.profiles.active}.properties")
+        @PropertySource("classpath:amqp-${spring.profiles.active}.properties"),
+        @PropertySource("classpath:clients-${spring.profiles.active}.properties")
 })
 @ComponentScan(basePackages = "dev.nano")
 public class NotificationApplication {

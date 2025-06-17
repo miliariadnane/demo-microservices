@@ -15,13 +15,13 @@ import jakarta.persistence.*;
 public class ApplicationEntity {
     @Id
     @SequenceGenerator(
-            name = "customer_sequence",
-            sequenceName = "customer_sequence",
+            name = "application_sequence",
+            sequenceName = "application_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "customer_sequence"
+            generator = "application_sequence"
     )
     @Column(
             name = "id",

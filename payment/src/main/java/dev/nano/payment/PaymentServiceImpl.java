@@ -11,6 +11,7 @@ import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentMapper.toListDTO(payments);
     }
 
+    @CircuitBreaker(name = "orderService", fallbackMethod = "createPaymentFallback")
     @Override
     public PaymentDTO createPayment(PaymentRequest paymentRequest) {
         try {
@@ -54,6 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentEntity payment = PaymentEntity.builder()
                     .customerId(paymentRequest.getCustomerId())
                     .orderId(paymentRequest.getOrderId())
+                    .status(PaymentStatus.COMPLETED)
                     .createAt(LocalDateTime.now())
                     .build();
 
@@ -85,5 +88,18 @@ public class PaymentServiceImpl implements PaymentService {
             log.error("Failed to send payment notification: {}", e.getMessage());
             throw new NotificationException("Failed to send payment notification");
         }
+    }
+
+    private PaymentDTO createPaymentFallback(PaymentRequest paymentRequest, Throwable throwable) {
+        log.error("Fallback triggered for createPayment: {}", throwable.getMessage());
+        // Persist payment with PENDING status for later processing
+        PaymentEntity pendingPayment = PaymentEntity.builder()
+                .customerId(paymentRequest.getCustomerId())
+                .orderId(paymentRequest.getOrderId())
+                .status(PaymentStatus.PENDING)
+                .createAt(LocalDateTime.now())
+                .build();
+        PaymentEntity saved = paymentRepository.save(pendingPayment);
+        return paymentMapper.toDTO(saved);
     }
 }

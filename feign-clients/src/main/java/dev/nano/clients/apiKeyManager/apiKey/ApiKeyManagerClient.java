@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 public interface ApiKeyManagerClient {
 
     @GetMapping("{apiKey}/applications/{applicationName}/authorization")
-    ApiKeyManagerResponse isKeyAuthorizedForApplication(
+    boolean isKeyAuthorizedForApplication(
             @PathVariable("apiKey") String apiKey,
             @PathVariable("applicationName") String applicationName);
 

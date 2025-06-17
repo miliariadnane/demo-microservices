@@ -19,7 +19,7 @@ management:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/${spring.application.name}
+    url: jdbc:postgresql://localhost:5433/${spring.application.name}
     username: postgres
     password: password
   jpa:
@@ -61,3 +61,28 @@ jwt:
   auth:
     converter:
       principle-attribute: preferred_username
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      productService:
+        sliding-window-type: count_based
+        sliding-window-size: 5
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+      orderService:
+        sliding-window-type: count_based
+        sliding-window-size: 5
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+  retry:
+    instances:
+      orderService:
+        max-attempts: 3
+        wait-duration: 1000ms
+  timelimiter:
+    instances:
+      orderService:
+        timeout-duration: 3s

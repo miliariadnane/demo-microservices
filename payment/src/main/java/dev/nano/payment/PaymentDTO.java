@@ -22,4 +22,6 @@ public class PaymentDTO {
     private Long orderId;
 
     private LocalDateTime createAt;
+
+    private PaymentStatus status;
 }

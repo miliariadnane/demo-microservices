@@ -17,13 +17,13 @@ import java.util.List;
 public class ApiKeyEntity {
     @Id
     @SequenceGenerator(
-            name = "customer_sequence",
-            sequenceName = "customer_sequence",
+            name = "api_key_sequence",
+            sequenceName = "api_key_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "customer_sequence"
+            generator = "api_key_sequence"
     )
     @Column(
             name = "id",

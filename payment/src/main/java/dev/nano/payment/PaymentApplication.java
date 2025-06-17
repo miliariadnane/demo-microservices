@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(
         scanBasePackages = {
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.ComponentScan;
         @PropertySource("classpath:clients-${spring.profiles.active}.properties")
 })
 @ComponentScan(basePackages = "dev.nano")
+@EnableScheduling
 public class PaymentApplication {
     public static void main(String[] args) {
         SpringApplication.run(PaymentApplication.class, args);

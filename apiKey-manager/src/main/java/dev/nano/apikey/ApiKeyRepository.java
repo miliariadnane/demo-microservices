@@ -3,6 +3,7 @@ package dev.nano.apikey;
 import dev.nano.application.ApplicationName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -12,9 +13,9 @@ public interface ApiKeyRepository extends JpaRepository<ApiKeyEntity, Long> {
         INNER JOIN ApplicationEntity ap
         ON ak.id = ap.apiKey.id
         WHERE ak.key = :key
-        AND ap.applicationName = :appName
+        AND ap.applicationName = :applicationName
     """)
-    Optional<ApiKeyEntity> findByKeyAndApplicationName(String key, ApplicationName applicationName);
+    Optional<ApiKeyEntity> findByKeyAndApplicationName(@Param("key") String key, @Param("applicationName") ApplicationName applicationName);
 
     @Query("""
         SELECT

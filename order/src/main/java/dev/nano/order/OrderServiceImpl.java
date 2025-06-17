@@ -11,6 +11,7 @@ import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toListDTO(orders);
     }
 
+    @CircuitBreaker(name = "productService", fallbackMethod = "createOrderFallback")
     @Override
     public OrderDTO createOrder(OrderRequest orderRequest) {
         try {
@@ -85,5 +87,10 @@ public class OrderServiceImpl implements OrderService {
             log.error("Failed to send order notification: {}", e.getMessage());
             throw new NotificationException("Failed to send order notification");
         }
+    }
+
+    private OrderDTO createOrderFallback(OrderRequest orderRequest, Throwable throwable) {
+        log.error("Fallback triggered for createOrder: {}", throwable.getMessage());
+        throw new OrderException("Product service is currently unavailable. Please try again later.");
     }
 }
