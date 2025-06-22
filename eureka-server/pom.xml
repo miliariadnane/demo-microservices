@@ -48,6 +48,12 @@
                         <configuration>
                             <from>
                                 <image>openjdk:17</image>
+                                <platforms>
+                                    <platform>
+                                        <architecture>arm64</architecture>
+                                        <os>linux</os>
+                                    </platform>
+                                </platforms>
                             </from>
                             <to>
                                 <image>${image}</image>
@@ -55,6 +61,11 @@
                                     <tag>latest</tag>
                                 </tags>
                             </to>
+                            <container>
+                                <jvmFlags>
+                                    <jvmFlag>-Dspring.profiles.active=docker</jvmFlag>
+                                </jvmFlags>
+                            </container>
                         </configuration>
                         <executions>
                             <execution>

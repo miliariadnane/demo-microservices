@@ -5,14 +5,14 @@ management:
 
 spring:
   datasource:
-    url: jdbc:postgresql://demo-microservices.csetxdk14qax.us-east-1.rds.amazonaws.com:5432/${spring.application.name}
+    url: jdbc:postgresql://postgres:5432/${spring.application.name}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   rabbitmq:
     addresses: rabbitmq:5672
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
   sql:
     init:
       mode: never

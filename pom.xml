@@ -18,7 +18,7 @@
     <module>payment</module>
     <module>amqp</module>
     <module>feign-clients</module>
-    <module>apiKey-manager</module>
+    <module>apikey-manager</module>
   </modules>
 
   <name>demo-microservices</name>

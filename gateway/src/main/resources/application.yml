@@ -46,6 +46,7 @@ spring:
   config:
     import:
       - "classpath:shared-application-${spring.profiles.active}.yml"
+      - "classpath:clients-${spring.profiles.active}.properties"
 
 #Circuit Breaker
 resilience4j:

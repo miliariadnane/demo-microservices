@@ -8,8 +8,9 @@ services:
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
+      - ../config/postgres/init.sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5432:5432"
+      - "5434:5432"
     networks:
       - postgres
     healthcheck:

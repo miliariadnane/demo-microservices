@@ -7,4 +7,7 @@ spring:
   application:
     name: order
   config:
-    import: classpath:shared-application-${spring.profiles.active}.yml
+    import:
+      - "classpath:shared-application-${spring.profiles.active}.yml"
+      - "classpath:clients-${spring.profiles.active}.properties"
+      - "classpath:amqp-${spring.profiles.active}.properties"
