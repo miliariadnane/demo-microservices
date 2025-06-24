@@ -22,7 +22,7 @@ Link to the documentation and guide website : [demo-microservices](https://milia
 #### Table of Contents
 ```text
 ├── Overview
-├── Setup a Microservice Project from Scratch
+├── Set up a Microservice Project from Scratch
 ├── Microservices 101
 │   ├── Service Discovery with Netflix Eureka
 │   ├── Communication Between Microservices
@@ -30,6 +30,7 @@ Link to the documentation and guide website : [demo-microservices](https://milia
 │   │   └── Asynchronous Communication
 │   ├── API Gateway
 │   │   ├── Load Balancing
+│   │   ├── Resiliency
 │   │   └── Security
 │   │       ├── API Key Manager
 │   │       └── Authentication
@@ -41,7 +42,6 @@ Link to the documentation and guide website : [demo-microservices](https://milia
 │       └── Prometheus & Grafana
 └── Microservices 102
     ├── Service Discovery Deep Dive
-    ├── Resiliency
     └── Cloud Deployment with AWS
 ```
 
@@ -72,9 +72,10 @@ Show your support by:
 - [x] Api Key Manager for APIs security
 - [x] AWS EKS Integration
 - [x] OAuth2 Authentication with Keycloak
-- [ ] Resilience4j for circuit breaker and fallback 🚧
-- [ ] Service Mesh Implementation 🚧
-- [ ] Frontend application with `React` or `Angular` 🚧
+- [x] Resilience4j for circuit breaker and fallback 🚧
+- [x] Automated K8S Deployment with Skaffold 🚧
+- [ ] Service Mesh Implementation
+- [ ] Frontend application with `React` or `Angular`
 
 ## Technologies - Libraries
 
