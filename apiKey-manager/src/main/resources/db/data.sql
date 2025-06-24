@@ -1,7 +1,7 @@
 -- First insert API Keys and store their IDs
 INSERT INTO api_keys (id, key, client, description, created_date, expiration_date, enabled, never_expires, approved,
                       revoked)
-SELECT nextval('api_key_sequence'), t.key_value, t.client, t.description, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '365 days', t.enabled, t.never_expires, t.approved, t.revoked
+SELECT nextval('api_key_sequence'), t.key, t.client, t.description, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '365 days', t.enabled, t.never_expires, t.approved, t.revoked
 FROM (
          VALUES
              ('ecom-frontend-key-2024', 'E-commerce Frontend', 'API Key for frontend application', true, false, true, false),
@@ -9,7 +9,7 @@ FROM (
              ('admin-dashboard-key-2024', 'Admin Dashboard', 'API Key for admin dashboard', true, true, true, false),
              -- Internal traffic key (never exposed publicly)
              ('internal-service-key', 'Internal Service', 'API Key for inter-service calls', true, true, true, false)
-     ) AS t(key_value, client, description, enabled, never_expires, approved, revoked);
+     ) AS t(key, client, description, enabled, never_expires, approved, revoked);
 
 -- Then insert Applications using the actual API key IDs by looking up the key value
 INSERT INTO applications (id, application_name, enabled, approved, revoked, api_key_id)

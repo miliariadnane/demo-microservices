@@ -94,8 +94,12 @@
                             <version>${lombok.mapstruct.binding.version}</version>
                         </path>
                     </annotationProcessorPaths>
-          <release>17</release>
+                    <release>17</release>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

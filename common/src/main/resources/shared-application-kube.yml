@@ -20,7 +20,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/demo-realm
+          issuer-uri: http://localhost/realms/demo-realm
+
+eureka:
+  client:
+    enabled: false
 
 jwt:
   auth:

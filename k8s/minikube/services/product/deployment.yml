@@ -11,21 +11,31 @@ spec:
     metadata:
       labels:
         app: product
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/actuator/prometheus"
+        prometheus.io/port: "8002"
     spec:
       containers:
-        - name: orders
+        - name: product
           image: miliariadnane/product:latest
-          imagePullPolicy: Always
-          resources:
-            requests:
-              cpu: "200m"
-              memory: "256Mi"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8002
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: kube
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: DB_PASSWORD
+          resources:
+            requests:
+              cpu: "200m"
       restartPolicy: Always

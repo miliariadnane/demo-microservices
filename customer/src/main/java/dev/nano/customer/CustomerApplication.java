@@ -9,7 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication(
         scanBasePackages = {
                 "dev.nano.customer",
-                "dev.nano.amqp"
+                "dev.nano.amqp",
+                "dev.nano.clients"
         }
 )
 @EnableFeignClients(

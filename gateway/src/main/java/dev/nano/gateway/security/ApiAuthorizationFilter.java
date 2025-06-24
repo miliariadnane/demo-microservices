@@ -16,6 +16,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class ApiAuthorizationFilter implements GlobalFilter, Ordered {
@@ -42,7 +43,7 @@ public class ApiAuthorizationFilter implements GlobalFilter, Ordered {
         String applicationName = route.getId();
         List<String> apiKey = exchange.getRequest().getHeaders().get("ApiKey");
 
-        if (applicationName == null || apiKey.isEmpty()) {
+        if (applicationName == null || Objects.requireNonNull(apiKey).isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "Application name is not defined, you are not authorized to access this resource"

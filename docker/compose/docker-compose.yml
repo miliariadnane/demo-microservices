@@ -265,6 +265,24 @@ services:
       - zipkin
       - rabbitmq
       - keycloak
+  apikey-manager:
+    image: miliariadnane/apikey-manager:latest
+    container_name: apikey-manager
+    ports:
+      - "8006:8006"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - spring
+      - postgres
+      - monitoring
+    depends_on:
+      - eureka-server
+      - gateway
+      - postgres
+      - zipkin
+      - rabbitmq
+      - keycloak
 
 networks:
   postgres:

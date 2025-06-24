@@ -1,0 +1,74 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: demo-microservices
+build:
+  local:
+    push: false
+  artifacts:
+    - image: miliariadnane/customer
+      jib:
+        type: maven
+        project: customer
+        args:
+          - "-Dspring.profiles.active=kube"
+    - image: miliariadnane/product
+      jib:
+        type: maven
+        project: product
+        args:
+          - "-Dspring.profiles.active=kube"
+    - image: miliariadnane/order
+      jib:
+        type: maven
+        project: order
+        args:
+          - "-Dspring.profiles.active=kube"
+    - image: miliariadnane/notification
+      jib:
+        type: maven
+        project: notification
+        args:
+          - "-Dspring.profiles.active=kube"
+    - image: miliariadnane/payment
+      jib:
+        type: maven
+        project: payment
+        args:
+          - "-Dspring.profiles.active=kube"
+    - image: miliariadnane/apikey-manager
+      jib:
+        type: maven
+        project: apikey-manager
+        args:
+          - "-Dspring.profiles.active=kube"
+manifests:
+  rawYaml:
+    - k8s/minikube/bootstrap/postgres/*.yml
+    - k8s/minikube/bootstrap/rabbitmq/*.yml
+    - k8s/minikube/bootstrap/zipkin/*.yml
+    - k8s/minikube/bootstrap/keycloak/*.yml
+    - k8s/minikube/bootstrap/prometheus/*.yml
+    - k8s/minikube/bootstrap/grafana/*.yml
+    - k8s/minikube/bootstrap/ingress/*.yml
+    - k8s/minikube/services/customer/*.yml
+    - k8s/minikube/services/product/*.yml
+    - k8s/minikube/services/order/*.yml
+    - k8s/minikube/services/notification/*.yml
+    - k8s/minikube/services/payment/*.yml
+    - k8s/minikube/services/apikey-manager/*.yml
+deploy:
+  kubectl: {}
+portForward:
+  - resourceType: service
+    resourceName: keycloak
+    port: 8080
+    localPort: 8180
+  - resourceType: service
+    resourceName: prometheus
+    port: 9090
+    localPort: 9090
+  - resourceType: service
+    resourceName: grafana
+    port: 3000
+    localPort: 3000 

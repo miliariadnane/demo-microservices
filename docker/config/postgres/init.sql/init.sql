@@ -3,5 +3,5 @@ CREATE DATABASE customer;
 CREATE DATABASE product;
 CREATE DATABASE "order";
 CREATE DATABASE payment;
-CREATE DATABASE apikey_manager;
-CREATE DATABASE keycloak; 
+CREATE DATABASE "apikey-manager";
+CREATE DATABASE keycloak;

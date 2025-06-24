@@ -1,44 +1,59 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: simple-ingress
+  name: main-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
-    - host: simple-minikube.com
-      http:
+    - http:
         paths:
-          - path: /customers
-            pathType: Prefix
+          - path: /api/v1/customer(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: customer
                 port:
-                  number: 80
-          - path: /products
-            pathType: Prefix
+                  number: 8001
+          - path: /api/v1/product(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: product
                 port:
-                  number: 80
-          - path: /orders
-            pathType: Prefix
+                  number: 8002
+          - path: /api/v1/order(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: order
                 port:
-                  number: 80
-          - path: /notifications
-            pathType: Prefix
+                  number: 8003
+          - path: /api/v1/notification(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: notification
                 port:
-                  number: 80
-          - path: /payments
-            pathType: Prefix
+                  number: 8004
+          - path: /api/v1/payment(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: payment
                 port:
-                  number: 80
+                  number: 8005
+          - path: /api/v1/apiKey-manager(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: apikey-manager
+                port:
+                  number: 8006
+          - path: /realms(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080

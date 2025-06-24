@@ -12,10 +12,6 @@ spring:
   security:
     api-key:
       enabled: false
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8180/realms/demo-realm
   cloud:
     gateway:
       routes:
@@ -39,7 +35,7 @@ spring:
           uri: lb://NOTIFICATION
           predicates:
             - Path=/api/v1/notifications/**
-        - id: apiKey-manager
+        - id: apikey-manager
           uri: lb://APIKEY-MANAGER
           predicates:
             - Path=/api/v1/apiKey-manager/**

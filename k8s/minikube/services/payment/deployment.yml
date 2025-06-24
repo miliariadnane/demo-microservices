@@ -11,21 +11,31 @@ spec:
     metadata:
       labels:
         app: payment
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/actuator/prometheus"
+        prometheus.io/port: "8005"
     spec:
       containers:
-        - name: orders
+        - name: payment
           image: miliariadnane/payment:latest
-          imagePullPolicy: Always
-          resources:
-            requests:
-              cpu: "200m"
-              memory: "256Mi"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8005
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: eks
+              value: kube
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: DB_PASSWORD
+          resources:
+            requests:
+              cpu: "200m"
       restartPolicy: Always

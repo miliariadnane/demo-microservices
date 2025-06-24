@@ -46,10 +46,11 @@ spec:
             #
             # Stage 2 check:
             command: ["rabbitmq-diagnostics", "status"]
-          initialDelaySeconds: 60
+          initialDelaySeconds: 120
           # See https://www.rabbitmq.com/monitoring.html for monitoring frequency recommendations.
           periodSeconds: 60
-          timeoutSeconds: 15
+          timeoutSeconds: 30
+          failureThreshold: 5
         readinessProbe:
           exec:
             # This is just an example. There is no "one true health check" but rather
@@ -59,10 +60,11 @@ spec:
             #
             # Stage 1 check:
             command: ["rabbitmq-diagnostics", "ping"]
-          initialDelaySeconds: 20
+          initialDelaySeconds: 60
           periodSeconds: 60
-          timeoutSeconds: 10
-        imagePullPolicy: Always
+          timeoutSeconds: 20
+          failureThreshold: 5
+        imagePullPolicy: IfNotPresent
         env:
           - name: MY_POD_NAME
             valueFrom:
