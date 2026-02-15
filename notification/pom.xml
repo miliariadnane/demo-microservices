@@ -143,7 +143,7 @@
                         <version>${jib.maven.plugin.version}</version>
                         <configuration>
                             <from>
-                                <image>openjdk:17</image>
+                                <image>eclipse-temurin:17-jre</image>
                                 <platforms>
                                     <platform>
                                         <architecture>arm64</architecture>
@@ -188,7 +188,7 @@
                         <version>${jib.maven.plugin.version}</version>
                         <configuration>
                             <from>
-                                <image>openjdk:17</image>
+                                <image>eclipse-temurin:17-jre</image>
                                 <platforms>
                                     <platform>
                                         <architecture>amd64</architecture>

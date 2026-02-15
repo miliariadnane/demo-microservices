@@ -5,4 +5,5 @@ VALUES (nextval('customer_sequence'), 'John Smith', 'john.smith@gmail.com', '+12
        (nextval('customer_sequence'), 'Mohammed Ali', 'mohammed.ali@yahoo.com', '+212661234567',
         'Marina Street, Casablanca, Morocco'),
        (nextval('customer_sequence'), 'Sarah Chen', 'sarah.chen@gmail.com', '+8613912345678',
-        '789 Nanjing Road, Shanghai, China');
+        '789 Nanjing Road, Shanghai, China')
+ON CONFLICT DO NOTHING;

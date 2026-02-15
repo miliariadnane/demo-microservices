@@ -37,7 +37,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/demo-realm
+          jwk-set-uri: http://keycloak:8080/realms/demo-realm/protocol/openid-connect/certs
 
 eureka:
   client:

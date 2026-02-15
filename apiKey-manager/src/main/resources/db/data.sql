@@ -9,7 +9,8 @@ FROM (
              ('admin-dashboard-key-2024', 'Admin Dashboard', 'API Key for admin dashboard', true, true, true, false),
              -- Internal traffic key (never exposed publicly)
              ('internal-service-key', 'Internal Service', 'API Key for inter-service calls', true, true, true, false)
-     ) AS t(key, client, description, enabled, never_expires, approved, revoked);
+     ) AS t(key, client, description, enabled, never_expires, approved, revoked)
+ON CONFLICT DO NOTHING;
 
 -- Then insert Applications using the actual API key IDs by looking up the key value
 INSERT INTO applications (id, application_name, enabled, approved, revoked, api_key_id)
@@ -38,4 +39,9 @@ FROM (VALUES ('CUSTOMER', 'ecom-frontend-key-2024'),
              ('PAYMENT', 'internal-service-key'),
              ('NOTIFICATION', 'internal-service-key'),
              ('APIKEY_MANAGER', 'internal-service-key')
-     ) AS t(app_name, api_key_name);
+     ) AS t(app_name, api_key_name)
+WHERE NOT EXISTS (
+    SELECT 1 FROM applications a
+    WHERE a.application_name = t.app_name
+    AND a.api_key_id = (SELECT ak.id FROM api_keys ak WHERE ak.key = t.api_key_name)
+);
