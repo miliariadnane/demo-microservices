@@ -1,0 +1,154 @@
+<mxfile host="65bd71144e">
+    <diagram id="interservice-api-key-flow" name="Inter-Service API Key Communication">
+        <mxGraphModel dx="2837" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="boundary" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="-80" y="40" width="1400" height="640" as="geometry"/>
+                </mxCell>
+                <mxCell id="title" value="&lt;b&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Inter-Service API Key Authentication — East-West Traffic&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#1A1A1A;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="45" width="500" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="subtitle" value="&lt;font style=&quot;font-size: 11px;&quot; color=&quot;#546e7a&quot;&gt;How microservices authenticate each other using a shared internal API key (e.g., Order → Product)&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="80" width="560" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="order-box" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=5;fillColor=#FFFFFF;strokeColor=#6c8ebf;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="-50" y="124" width="200" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="order-label" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;🛒 Order Service&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot; color=&quot;#546e7a&quot;&gt;(Calling Service)&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#1A1A1A;" parent="1" vertex="1">
+                    <mxGeometry x="-25" y="132" width="150" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="order-impl" value="&lt;b&gt;OrderServiceImpl&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot; color=&quot;#546e7a&quot;&gt;createOrder()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=11;arcSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="-30" y="184" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="order-feign" value="&lt;b&gt;ProductClient&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot; color=&quot;#546e7a&quot;&gt;@FeignClient(name=&quot;product&quot;)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=10;arcSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="-30" y="234" width="160" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="order-config" value="&lt;b&gt;InternalApiKeyFeignConfig&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;🔑 Adds &lt;b&gt;X-API-KEY&lt;/b&gt; header&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ff9800;fontColor=#e65100;fontSize=10;arcSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="-30" y="282" width="160" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="order-arr1" style="exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#1565c0;strokeWidth=1;" parent="1" source="order-impl" target="order-feign" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="order-arr2" style="exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#1565c0;strokeWidth=1;" parent="1" source="order-feign" target="order-config" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="note-request" value="&lt;b&gt;HTTP Request&lt;/b&gt;&lt;br&gt;GET /api/v1/products/{id}&lt;br&gt;&lt;b&gt;Header:&lt;/b&gt; X-API-KEY: internal-service-key" style="shape=note;size=14;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontColor=#1A1A1A;align=left;spacingLeft=6;" parent="1" vertex="1">
+                    <mxGeometry x="-50" y="354" width="200" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=16;strokeWidth=4;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" source="order-box" target="filter-box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-1-label" value="&lt;b&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;① Request&lt;/font&gt;&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" parent="arrow-1" connectable="0" vertex="1">
+                    <mxGeometry x="-0.1" relative="1" as="geometry">
+                        <mxPoint x="-12" y="-14" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="filter-box" value="" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillWeight=4;hachureGap=8;hachureAngle=45;fillColor=#1ba1e2;sketch=1;dashed=1;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="200" width="180" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="filter-title" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;ApiKeyAuthFilter&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="168" width="180" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="filter-desc" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;OncePerRequestFilter&lt;br&gt;🔍 Reads &lt;b&gt;X-API-KEY&lt;/b&gt; header&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#546E7A;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="272" width="180" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=16;strokeWidth=4;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" source="filter-box" target="checker-box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-2-label" value="&lt;b&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;② Validate&lt;/font&gt;&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="arrow-2" connectable="0" vertex="1">
+                    <mxGeometry x="-0.1" relative="1" as="geometry">
+                        <mxPoint y="-14" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="checker-box" value="" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillWeight=4;hachureGap=8;hachureAngle=45;fillColor=#1ba1e2;sketch=1;dashed=1;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="557.14" y="200" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="checker-title" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;ApiKeyManagerClient&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="557.14" y="168" width="200" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="checker-desc" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;isKeyAuthorizedForApplication(key, &quot;ORDER&quot;)&lt;br&gt;→ Feign call to API Key Manager&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#546E7A;" parent="1" vertex="1">
+                    <mxGeometry x="557.14" y="272" width="200" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=16;strokeWidth=4;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" source="checker-box" target="akm-box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow-3-label" value="&lt;b&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;③ Feign Call&lt;/font&gt;&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="arrow-3" connectable="0" vertex="1">
+                    <mxGeometry x="-0.1" relative="1" as="geometry">
+                        <mxPoint y="-14" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="akm-box" value="" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillWeight=4;hachureGap=8;hachureAngle=45;fillColor=#1ba1e2;sketch=1;dashed=1;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="867.14" y="200" width="160" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="akm-title" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;API Key Manager&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="867.14" y="168" width="160" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="akm-desc" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;&amp;nbsp;✅&amp;nbsp; &amp;nbsp;Key &amp;amp; app enabled&lt;br&gt;&amp;nbsp;✅&amp;nbsp; &amp;nbsp;Not revoked / not expired&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=#b1ddf0;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1045" y="215" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="decision" value="&lt;b&gt;Authorized?&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontColor=#1A1A1A;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="877.1400000000001" y="324" width="140" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="to-decision" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;strokeColor=#6c8ebf;" parent="1" source="akm-box" target="decision" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="to-decision-label" value="&lt;b&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;returns true/false&lt;/font&gt;&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="to-decision" connectable="0" vertex="1">
+                    <mxGeometry x="0.2" relative="1" as="geometry">
+                        <mxPoint x="63" y="-13" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="yes-box" value="" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillWeight=4;hachureGap=8;hachureAngle=45;fillColor=#1ba1e2;sketch=1;dashed=1;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="1132.14" y="334" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="yes-title" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;ProductController&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="1132.14" y="306" width="140" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="yes-desc" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;SecurityContext set&lt;br&gt;ROLE_INTERNAL_SERVICE&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#546E7A;" parent="1" vertex="1">
+                    <mxGeometry x="1132.14" y="409" width="140" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-yes" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=16;strokeWidth=4;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" source="decision" target="yes-box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-yes-label" value="&lt;b&gt;&lt;font style=&quot;font-size: 13px;&quot; color=&quot;#82b366&quot;&gt;④ YES — Proceed&lt;/font&gt;&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge-yes" connectable="0" vertex="1">
+                    <mxGeometry x="0.2" relative="1" as="geometry">
+                        <mxPoint x="-26" y="-25" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="no-box" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;🚫 401 Unauthorized&lt;/font&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontColor=#1A1A1A;strokeWidth=2;arcSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1122.14" y="460" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=16;strokeWidth=4;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" source="decision" target="no-box" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge-no-label" value="&lt;b&gt;&lt;font style=&quot;font-size: 13px;&quot; color=&quot;#b85450&quot;&gt;NO&lt;/font&gt;&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge-no" connectable="0" vertex="1">
+                    <mxGeometry x="0.5" relative="1" as="geometry">
+                        <mxPoint x="-30" y="-15" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="product-label" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;📦 Product Service&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot; color=&quot;#546e7a&quot;&gt;(Receiving Service)&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#2e7d32;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="128" width="180" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-line" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#bdbdbd;strokeWidth=1;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="30" y="615" as="sourcePoint"/>
+                        <mxPoint x="1570" y="615" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="legend-box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6c8ebf;strokeWidth=1.5;" parent="1" vertex="1">
+                    <mxGeometry x="-50" y="450" width="960" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-title" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Inter-Service API Key Flow — Steps&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#1A1A1A;" parent="1" vertex="1">
+                    <mxGeometry x="-32" y="455" width="290" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-steps" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;&lt;b style=&quot;&quot;&gt;①&lt;/b&gt; Order Service builds request; &lt;b style=&quot;&quot;&gt;InternalApiKeyFeignConfig&lt;/b&gt; adds &lt;b style=&quot;&quot;&gt;X-API-KEY&lt;/b&gt; header (e.g. internal-service-key).&lt;br&gt;&lt;b style=&quot;&quot;&gt;②&lt;/b&gt; Request hits &lt;b style=&quot;&quot;&gt;Product Service&lt;/b&gt;; &lt;b style=&quot;&quot;&gt;ApiKeyAuthFilter&lt;/b&gt; (OncePerRequestFilter) reads &lt;b style=&quot;&quot;&gt;X-API-KEY&lt;/b&gt; and calls &lt;b style=&quot;&quot;&gt;ApiKeyManagerClient&lt;/b&gt;.&lt;br&gt;&lt;b style=&quot;&quot;&gt;③&lt;/b&gt; ApiKeyManagerClient calls &lt;b style=&quot;&quot;&gt;API Key Manager&lt;/b&gt; (Feign) to check if key is authorized for application &lt;b style=&quot;&quot;&gt;ORDER&lt;/b&gt;.&lt;br&gt;&lt;b style=&quot;&quot;&gt;④&lt;/b&gt; If &lt;b style=&quot;&quot;&gt;true&lt;/b&gt;: SecurityContext set with ROLE_INTERNAL_SERVICE → request proceeds to ProductController. If &lt;b style=&quot;&quot;&gt;false&lt;/b&gt;: 401 Unauthorized.&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#424242;spacingLeft=8;spacingTop=4;" parent="1" vertex="1">
+                    <mxGeometry x="-32" y="485" width="920" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-keys" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b style=&quot;&quot;&gt;&lt;font style=&quot;&quot;&gt;Pre-seeded internal key:&lt;/font&gt;&lt;/b&gt; 🔑 &lt;b style=&quot;&quot;&gt;internal-service-key&lt;/b&gt; — used by all microservices (Order, Product, Payment, etc.) for East-West calls. &lt;br&gt;Same key validated against &lt;b style=&quot;&quot;&gt;ApplicationName.ORDER&lt;/b&gt; (and other apps) in API Key Manager.&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#546e7a;spacingLeft=8;" parent="1" vertex="1">
+                    <mxGeometry x="-32" y="577" width="840" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
