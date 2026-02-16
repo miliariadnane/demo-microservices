@@ -17,13 +17,23 @@ spec:
         - name: postgres
           persistentVolumeClaim:
             claimName: postgres-pc-volume-claim
+        - name: init-script
+          configMap:
+            name: postgres-init
+            items:
+              - key: init.sql
+                path: init.sql
       containers:
         - name: postgres
-          image: postgres
+          image: postgres:16-alpine
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: "/var/lib/postgresql/data"
               name: postgres
+              subPath: pgdata
+            - mountPath: "/docker-entrypoint-initdb.d/init.sql"
+              name: init-script
+              subPath: init.sql
           envFrom:
             - configMapRef:
                 name: postgres-config

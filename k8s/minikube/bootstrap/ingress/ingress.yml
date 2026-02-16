@@ -14,35 +14,35 @@ spec:
               service:
                 name: customer
                 port:
-                  number: 8001
+                  number: 80
           - path: /api/v1/product(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
                 name: product
                 port:
-                  number: 8002
+                  number: 80
           - path: /api/v1/order(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
                 name: order
                 port:
-                  number: 8003
+                  number: 80
           - path: /api/v1/notification(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
                 name: notification
                 port:
-                  number: 8004
+                  number: 80
           - path: /api/v1/payment(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
                 name: payment
                 port:
-                  number: 8005
+                  number: 80
           - path: /api/v1/apiKey-manager(/|$)(.*)
             pathType: ImplementationSpecific
             backend:

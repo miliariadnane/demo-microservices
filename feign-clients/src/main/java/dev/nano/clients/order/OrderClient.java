@@ -12,6 +12,6 @@ public interface OrderClient {
     @GetMapping(path = "/api/v1/orders/{orderId}")
     OrderResponse getOrder(@PathVariable("orderId") Long orderId);
 
-    @PostMapping(path = "/api/v1/orders/add")
+    @PostMapping(path = "/api/v1/orders")
     OrderResponse createOrder(@RequestBody OrderRequest orderRequest);
 }
