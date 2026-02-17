@@ -1,15 +1,31 @@
 # 🧺 E-commerce Platform With Microservice Architecture 🧺
 
 <p align="center">
-   <img src="https://img.shields.io/badge/Dev-miliariadnane-blue?style"/>
-   <img src="https://img.shields.io/badge/language-java-red?style"/>
-   <img src="https://img.shields.io/badge/Framework-Spring Frameworks-green?style"/>
-   <img src="https://img.shields.io/github/stars/miliariadnane/demo-microservices"/>
-   <img src="https://img.shields.io/github/forks/miliariadnane/demo-microservices"/>
-   <img src="https://img.shields.io/static/v1?label=%F0%9F%8C%9F&message=If%20Useful&style=style=flat&color=BC4E99"/>
+  <img src="docs/images/guide-banner.png" alt="Microservice E-commerce Platform — From Zero to Production"/>
 </p>
 
-> A practical e-commerce platform with spring frameworks, kubernetes and deployed on AWS. The repository demonstrates microservice patterns and cloud-native capabilities with focus on scalability, security, resiliency, observability and deployment improvements.
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Spring Boot-3-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Spring Cloud-2023-6DB33F?style=for-the-badge&logo=spring&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white"/>
+  <img src="https://img.shields.io/badge/AWS EKS-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Keycloak-4D4D4D?style=for-the-badge&logo=keycloak&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white"/>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/stars/miliariadnane/demo-microservices?style=for-the-badge&logo=github&logoColor=white&label=Stars"/>
+  <img src="https://img.shields.io/github/forks/miliariadnane/demo-microservices?style=for-the-badge&logo=github&logoColor=white&label=Forks"/>
+  <img src="https://img.shields.io/static/v1?label=%F0%9F%8C%9F&message=Star%20If%20Useful&style=for-the-badge&color=BC4E99"/>
+</p>
+
+> A practical e-commerce platform with Spring frameworks, Kubernetes, Terraform and deployed on AWS EKS. The repository demonstrates microservice patterns and cloud-native capabilities with focus on scalability, security, resiliency, observability, infrastructure automation and deployment improvements.
 
 💡 This application is not business oriented and my focus is mostly on technical part, I just want to implement a sample app from scratch with microservice architecture using different technologies, principles and patterns.
 
@@ -31,18 +47,26 @@ Link to the documentation and guide website : [demo-microservices](https://milia
 │   ├── API Gateway
 │   │   ├── Load Balancing
 │   │   ├── Resiliency
+│   │   │   ├── Circuit Breaker
+│   │   │   ├── Fallback Pattern
+│   │   │   └── Rate Limiting
 │   │   └── Security
 │   │       ├── API Key Manager
 │   │       └── Authentication
 │   ├── Cloud Native Deployment
 │   │   ├── Containerization with Docker & Jib
-│   │   └── Container Orchestration with Kubernetes
+│   │   ├── Container Orchestration with Kubernetes
+│   │   └── Automating Deployment with Skaffold
 │   └── Monitoring
 │       ├── Distributed Tracing with Sleuth & Zipkin
 │       └── Prometheus & Grafana
 └── Microservices 102
     ├── Service Discovery Deep Dive
-    └── Cloud Deployment with AWS
+    ├── Cloud Deployment with AWS
+    └── Infrastructure as Code with Terraform
+        ├── Terraform Fundamentals
+        ├── Our Terraform Configuration
+        └── Deploying to AWS with Terraform
 ```
 
 ## Support
@@ -60,8 +84,11 @@ Show your support by:
 - ✅ `Distributed Tracing` using **Sleuth & Zipkin**
 - ✅ `Event-Driven Architecture` with **RabbitMQ**
 - ✅ `Security` with **API Key Manager** & **OAuth2/Keycloak**
+- ✅ `Resiliency` with **Resilience4j** (Circuit Breaker, Fallback, Rate Limiting)
 - ✅ Database per Service Pattern
-- ✅ Cloud Native Support **(Kubernetes & AWS)**
+- ✅ Cloud Native Support **(Kubernetes & AWS EKS)**
+- ✅ `Infrastructure as Code` with **Terraform**
+- ✅ `Automated Deployment` with **Skaffold**
 - ✅ `Monitoring` with **Prometheus & Grafana**
 - ✅ `Email Notifications` with **AWS SES**
 
@@ -70,10 +97,10 @@ Show your support by:
 - [x] AWS EKS Integration
 - [x] API Documentation with OpenAPI
 - [x] Api Key Manager for APIs security
-- [x] AWS EKS Integration
 - [x] OAuth2 Authentication with Keycloak
-- [x] Resilience4j for circuit breaker and fallback 🚧
-- [x] Automated K8S Deployment with Skaffold 🚧
+- [x] Resilience4j for circuit breaker and fallback
+- [x] Automated K8S Deployment with Skaffold
+- [x] Infrastructure as Code with Terraform
 - [ ] Service Mesh Implementation
 - [ ] Frontend application with `React` or `Angular`
 
@@ -105,7 +132,10 @@ Show your support by:
 - ✔️ **[`grafana`](https://grafana.com/)** - Grafana is an open source, feature rich metrics dashboard and graph editor for Graphite, Elasticsearch, OpenTSDB, Prometheus and InfluxDB.
 - ✔️ **[`AWS SES`](https://aws.amazon.com/ses/)** - Amazon Simple Email Service (Amazon SES) is a cloud-based email sending service.
 - ✔️ **[`AWS EKS`](https://aws.amazon.com/eks/)** - Amazon Elastic Kubernetes Service (Amazon EKS) is a managed service that makes it easy for you to run Kubernetes on AWS without needing to install, operate, and maintain your own Kubernetes control plane.
+- ✔️ **[`Terraform`](https://www.terraform.io/)** - Infrastructure as Code tool for provisioning and managing cloud infrastructure using declarative configuration files.
+- ✔️ **[`Skaffold`](https://skaffold.dev/)** - Skaffold handles the workflow for building, pushing and deploying Kubernetes applications, enabling continuous development.
 - ✔️ **[`Keycloak`](https://www.keycloak.org/)** - Open Source Identity and Access Management that adds security to your applications.
+- ✔️ **[`Resilience4j`](https://resilience4j.readme.io/)** - Lightweight fault tolerance library for Java providing circuit breaker, rate limiter, retry and fallback patterns.
 - ✔️ **[`Docker`](https://www.docker.com/)** - Docker is a set of platform as a service products that allows to build, test, and deploy applications quickly using containers.
 - ✔️ **[`kubernetes`](https://kubernetes.io/)** - Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.
 
@@ -113,15 +143,15 @@ Show your support by:
 
 ### Microservices Architecture
 
-![](/docs/diagrams/architecture-diagram.png)
+![](/docs/images/architecture-diagram.png)
 
 ### Infrastructure Architecture
 
-![](/docs/diagrams/infrastructure-diagram.png)
+![](/docs/images/infrastructure-diagram.png)
 
 ### Deployment Architecture
 
-![](/docs/diagrams/deploy-workflow-diagram.png)
+![](/docs/images/deploy-workflow-diagram.png)
 
 ## License
 This project is made available under the MIT license. See [LICENSE](https://github.com/miliariadnane/advanced-microservices/blob/main/LICENSE) for details.
