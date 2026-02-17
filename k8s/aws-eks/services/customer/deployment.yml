@@ -28,12 +28,14 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: eks
-            - name: DB_USERNAME
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/customer
+            - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: dbsecretd
                   key: db_username
-            - name: DB_PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: dbsecret
