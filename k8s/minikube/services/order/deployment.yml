@@ -2,15 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: order
+  labels:
+    app: order
+    version: stable
+    app.kubernetes.io/name: order
+    app.kubernetes.io/component: service
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: order
+      version: stable
   template:
     metadata:
       labels:
         app: order
+        version: stable
+        app.kubernetes.io/name: order
+        app.kubernetes.io/component: service
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/actuator/prometheus"
@@ -42,4 +51,20 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: DB_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8003
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8003
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
       restartPolicy: Always

@@ -1,0 +1,45 @@
+# Blue/Green Deployment overlay for the product service.
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose-blue-green.yml up -d
+#   PRODUCT_ROUTE_URI=lb://PRODUCT-GREEN docker compose -f docker-compose.yml -f docker-compose-blue-green.yml up -d gateway
+
+services:
+  product:
+    container_name: product-blue
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - APP_VERSION=blue
+    labels:
+      deployment.strategy: "blue-green"
+      deployment.version: "blue"
+      deployment.service: "product"
+
+  product-green:
+    image: miliariadnane/product:latest
+    container_name: product-green
+    ports:
+      - "8012:8002"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - APP_VERSION=green
+      - SPRING_APPLICATION_NAME=product-green
+      # Override datasource: app name changed but both versions share the same DB
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/product
+    networks:
+      - spring
+      - postgres
+      - monitoring
+    labels:
+      deployment.strategy: "blue-green"
+      deployment.version: "green"
+      deployment.service: "product"
+    depends_on:
+      - eureka-server
+      - postgres
+      - zipkin
+      - rabbitmq
+
+  gateway:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - PRODUCT_ROUTE_URI=${PRODUCT_ROUTE_URI:-lb://PRODUCT}

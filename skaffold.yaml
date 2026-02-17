@@ -3,6 +3,9 @@ kind: Config
 metadata:
   name: demo-microservices
 build:
+  tagPolicy:
+    customTemplate:
+      template: "latest"
   local:
     push: false
   artifacts:

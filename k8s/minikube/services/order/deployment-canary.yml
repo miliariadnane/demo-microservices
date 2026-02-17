@@ -1,35 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customer
+  name: order-canary
   labels:
-    app: customer
-    app.kubernetes.io/name: customer
+    app: order
+    version: canary
+    app.kubernetes.io/name: order
     app.kubernetes.io/component: service
 spec:
-  replicas: 2
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+  replicas: 1
   selector:
     matchLabels:
-      app: customer
+      app: order
+      version: canary
   template:
     metadata:
       labels:
-        app: customer
-        app.kubernetes.io/name: customer
+        app: order
+        version: canary
+        app.kubernetes.io/name: order
         app.kubernetes.io/component: service
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/actuator/prometheus"
-        prometheus.io/port: "8001"
+        prometheus.io/port: "8003"
     spec:
       containers:
-        - name: customer
-          image: miliariadnane/customer:latest
+        - name: order
+          image: miliariadnane/order:latest
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -39,7 +37,7 @@ spec:
               memory: "512Mi"
               cpu: "500m"
           ports:
-            - containerPort: 8001
+            - containerPort: 8003
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: kube
@@ -56,7 +54,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: 8001
+              port: 8003
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
@@ -64,7 +62,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: 8001
+              port: 8003
             initialDelaySeconds: 60
             periodSeconds: 15
             timeoutSeconds: 5

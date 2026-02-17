@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: order-canary-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "10"
+    nginx.ingress.kubernetes.io/canary-by-header: "X-Canary"
+    nginx.ingress.kubernetes.io/canary-by-header-value: "always"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/v1/order(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: order-canary
+                port:
+                  number: 80

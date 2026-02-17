@@ -20,7 +20,7 @@ spring:
           predicates:
             - Path=/api/v1/customers/**
         - id: product
-          uri: lb://PRODUCT
+          uri: ${PRODUCT_ROUTE_URI:lb://PRODUCT}
           predicates:
             - Path=/api/v1/products/**
         - id: order

@@ -1,4 +1,4 @@
-# 🧺 E-commerce Platform With Microservice Architecture 🧺
+# 🧺 E-commerce Platform With Microservice Architecture
 
 <p align="center">
   <img src="docs/images/guide-banner.png" alt="Microservice E-commerce Platform — From Zero to Production"/>
@@ -60,13 +60,17 @@ Link to the documentation and guide website : [demo-microservices](https://milia
 │   └── Monitoring
 │       ├── Distributed Tracing with Sleuth & Zipkin
 │       └── Prometheus & Grafana
-└── Microservices 102
-    ├── Service Discovery Deep Dive
-    ├── Cloud Deployment with AWS
-    └── Infrastructure as Code with Terraform
-        ├── Terraform Fundamentals
-        ├── Our Terraform Configuration
-        └── Deploying to AWS with Terraform
+├── Microservices 102
+│   ├── Service Discovery Deep Dive
+│   ├── Cloud Deployment with AWS
+│   ├── Infrastructure as Code with Terraform
+│   │   ├── Terraform Fundamentals
+│   │   ├── Our Terraform Configuration
+│   │   └── Deploying to AWS with Terraform
+│   └── Deployment Strategies
+│       ├── Blue/Green Deployment (Docker Compose)
+│       ├── Rolling Update (Kubernetes)
+│       └── Canary Deployment (Kubernetes)
 ```
 
 ## Support
@@ -91,6 +95,72 @@ Show your support by:
 - ✅ `Automated Deployment` with **Skaffold**
 - ✅ `Monitoring` with **Prometheus & Grafana**
 - ✅ `Email Notifications` with **AWS SES**
+- ✅ `Deployment Strategies` — **Blue/Green**, **Rolling Update**, **Canary**
+
+## Deployment Strategies
+
+This project demonstrates three deployment strategies, each in the environment where it fits best:
+
+| Strategy | Environment | Service | How |
+|----------|-------------|---------|-----|
+| **Blue/Green** | Docker Compose | `product` | Two service versions + Gateway route switch |
+| **Rolling Update** | Kubernetes | `customer` | Gradual pod replacement with health probes |
+| **Canary** | Kubernetes | `order` | NGINX Ingress traffic splitting (weight-based) |
+
+### Blue/Green (Docker Compose)
+
+Runs two versions of the product service side by side. The Gateway controls which version receives traffic.
+
+```bash
+# Start both versions (traffic goes to blue by default)
+docker compose -f docker-compose.yml -f docker-compose-blue-green.yml up -d
+
+# Switch traffic to green
+PRODUCT_ROUTE_URI=lb://PRODUCT-GREEN \
+  docker compose -f docker-compose.yml -f docker-compose-blue-green.yml up -d gateway
+
+# Verify (check X-App-Version header)
+curl -v http://localhost:8765/api/v1/products/list
+
+# Rollback to blue
+PRODUCT_ROUTE_URI=lb://PRODUCT \
+  docker compose -f docker-compose.yml -f docker-compose-blue-green.yml up -d gateway
+```
+
+### Rolling Update (Kubernetes)
+
+The customer deployment uses `RollingUpdate` strategy with `maxSurge: 1` and `maxUnavailable: 0`, combined with readiness probes. Kubernetes replaces pods one at a time, only routing traffic to healthy instances.
+
+```bash
+# Update the image and watch the rollout
+kubectl set image deployment/customer customer=miliariadnane/customer:v2
+kubectl rollout status deployment/customer
+
+# Rollback if needed
+kubectl rollout undo deployment/customer
+```
+
+### Canary (Kubernetes)
+
+Deploys a canary version of the order service and uses NGINX Ingress canary annotations to split traffic (10% canary, 90% stable).
+
+```bash
+# Deploy canary
+kubectl apply -f k8s/minikube/services/order/deployment-canary.yml
+kubectl apply -f k8s/minikube/services/order/service-canary.yml
+kubectl apply -f k8s/minikube/services/order/ingress-canary.yml
+
+# Force a request to canary (header-based routing)
+curl -H "X-Canary: always" http://<ingress>/api/v1/order/list
+
+# Increase canary weight (edit ingress-canary.yml: canary-weight → 25, 50, 100)
+kubectl apply -f k8s/minikube/services/order/ingress-canary.yml
+
+# Rollback canary
+kubectl delete -f k8s/minikube/services/order/deployment-canary.yml \
+               -f k8s/minikube/services/order/service-canary.yml \
+               -f k8s/minikube/services/order/ingress-canary.yml
+```
 
 ## Roadmap
 - [x] Kubernetes Deployment
@@ -101,6 +171,7 @@ Show your support by:
 - [x] Resilience4j for circuit breaker and fallback
 - [x] Automated K8S Deployment with Skaffold
 - [x] Infrastructure as Code with Terraform
+- [x] Deployment Strategies (Blue/Green, Rolling Update, Canary)
 - [ ] Service Mesh Implementation
 - [ ] Frontend application with `React` or `Angular`
 

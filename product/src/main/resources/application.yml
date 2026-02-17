@@ -9,3 +9,7 @@ spring:
   config:
     import:
       - "classpath:shared-application-${spring.profiles.active}.yml"
+
+# Deployment metadata — used by VersionHeaderFilter to identify the running version
+app:
+  version: ${APP_VERSION:unknown}
