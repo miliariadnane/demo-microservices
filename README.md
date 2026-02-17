@@ -20,8 +20,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/miliariadnane/demo-microservices?style=for-the-badge&logo=github&logoColor=white&label=Stars"/>
-  <img src="https://img.shields.io/github/forks/miliariadnane/demo-microservices?style=for-the-badge&logo=github&logoColor=white&label=Forks"/>
+  <img src="https://img.shields.io/github/stars/miliariadnane/demo-microservices?style=for-the-badge"/>
+  <img src="https://img.shields.io/github/forks/miliariadnane/demo-microservices?style=for-the-badge"/>
   <img src="https://img.shields.io/static/v1?label=%F0%9F%8C%9F&message=Star%20If%20Useful&style=for-the-badge&color=BC4E99"/>
 </p>
 
