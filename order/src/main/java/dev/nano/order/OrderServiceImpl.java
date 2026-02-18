@@ -2,8 +2,10 @@ package dev.nano.order;
 
 import dev.nano.amqp.RabbitMQProducer;
 import dev.nano.clients.notification.NotificationRequest;
+import dev.nano.clients.order.OrderCreatedEvent;
 import dev.nano.clients.order.OrderRequest;
 import dev.nano.clients.product.ProductClient;
+import dev.nano.clients.product.ProductResponse;
 import dev.nano.exceptionhandler.business.NotificationException;
 import dev.nano.exceptionhandler.business.OrderException;
 import dev.nano.exceptionhandler.core.ResourceNotFoundException;
@@ -49,8 +51,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO createOrder(OrderRequest orderRequest) {
         try {
-            // Verify product exists
-            productClient.getProduct(orderRequest.getProductId());
+            ProductResponse product = productClient.getProduct(orderRequest.getProductId());
 
             OrderEntity order = OrderEntity.builder()
                     .customerId(orderRequest.getCustomerId())
@@ -61,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
 
             OrderEntity savedOrder = orderRepository.save(order);
             sendOrderNotification(orderRequest);
+            publishOrderCreatedEvent(savedOrder, orderRequest, product);
 
             return orderMapper.toDTO(savedOrder);
         } catch (FeignException e) {
@@ -86,6 +88,30 @@ public class OrderServiceImpl implements OrderService {
         } catch (Exception e) {
             log.error("Failed to send order notification: {}", e.getMessage());
             throw new NotificationException("Failed to send order notification");
+        }
+    }
+
+    private void publishOrderCreatedEvent(OrderEntity savedOrder, OrderRequest orderRequest, ProductResponse product) {
+        try {
+            OrderCreatedEvent event = OrderCreatedEvent.builder()
+                    .orderId(savedOrder.getId())
+                    .customerId(orderRequest.getCustomerId())
+                    .customerName(orderRequest.getCustomerName())
+                    .customerEmail(orderRequest.getCustomerEmail())
+                    .productId(orderRequest.getProductId())
+                    .productName(product.getName())
+                    .productPrice(product.getPrice())
+                    .amount(orderRequest.getAmount())
+                    .createdAt(savedOrder.getCreateAt())
+                    .build();
+
+            rabbitMQProducer.publish(
+                    "internal.exchange",
+                    "internal.order.routing-key",
+                    event
+            );
+        } catch (Exception e) {
+            log.error("Failed to publish OrderCreatedEvent for orderId {}: {}", savedOrder.getId(), e.getMessage());
         }
     }
 

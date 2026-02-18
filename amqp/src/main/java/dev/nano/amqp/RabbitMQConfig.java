@@ -21,6 +21,10 @@ public class RabbitMQConfig {
     private String notificationQueue;
     @Value("${rabbitmq.routing-key.internal-notification}")
     private String internalNotificationRoutingKey;
+    @Value("${rabbitmq.queue.order-view}")
+    private String orderViewQueue;
+    @Value("${rabbitmq.routing-key.internal-order}")
+    private String internalOrderRoutingKey;
 
     public RabbitMQConfig(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
@@ -32,17 +36,30 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    Queue orderViewQueue() {
+        return new Queue(this.orderViewQueue);
+    }
+
+    @Bean
     TopicExchange internalExchange() {
         return new TopicExchange(this.internalExchange);
     }
 
     // bind queue to exchange with routing key
     @Bean
-    Binding binding() {
+    Binding notificationBinding() {
         return BindingBuilder
                 .bind(notificationQueue())
                 .to(internalExchange())
                 .with(this.internalNotificationRoutingKey);
+    }
+
+    @Bean
+    Binding orderViewBinding() {
+        return BindingBuilder
+                .bind(orderViewQueue())
+                .to(internalExchange())
+                .with(this.internalOrderRoutingKey);
     }
 
     // Configure amqp template that allows to send messages
@@ -67,7 +84,6 @@ public class RabbitMQConfig {
     // Jackson2JsonMessageConverter is used to convert messages to JSON format
     @Bean
     MessageConverter jacksonConverter() {
-        MessageConverter jackson2JsonMessageConverter = new Jackson2JsonMessageConverter();
-        return jackson2JsonMessageConverter;
+        return new Jackson2JsonMessageConverter();
     }
 }
