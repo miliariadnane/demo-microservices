@@ -6,9 +6,9 @@ management:
     sampling:
       probability: 1.0
     enabled: true
-  zipkin:
+  otlp:
     tracing:
-      endpoint: http://localhost:9411/api/v2/spans
+      endpoint: http://jaeger:4318/v1/traces
   endpoints:
     web:
       exposure:

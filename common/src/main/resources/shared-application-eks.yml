@@ -1,7 +1,7 @@
 management:
-  zipkin:
+  otlp:
     tracing:
-      endpoint: http://zipkin:9411/api/v2/spans
+      endpoint: http://jaeger:4318/v1/traces
 
 spring:
   datasource:

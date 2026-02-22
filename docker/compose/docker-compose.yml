@@ -37,16 +37,20 @@ services:
     networks:
       - postgres
     restart: unless-stopped
-  zipkin:
-    image: openzipkin/zipkin:latest
-    container_name: zipkin
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
     ports:
-      - "9411:9411"
+      - "16686:16686"   # Jaeger UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
     networks:
       - spring
       - monitoring
     healthcheck:
-      test: [ "CMD", "wget", "-q", "--tries=1", "--spider", "http://localhost:9411/health" ]
+      test: [ "CMD", "wget", "-q", "--tries=1", "--spider", "http://localhost:16686" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -161,7 +165,7 @@ services:
       - spring
       - monitoring
     depends_on:
-      - zipkin
+      - jaeger
   gateway:
     image: miliariadnane/gateway:latest
     container_name: gateway
@@ -173,7 +177,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      - zipkin
+      - jaeger
       - eureka-server
   customer:
     image: miliariadnane/customer:latest
@@ -190,7 +194,7 @@ services:
       - eureka-server
       - gateway
       - postgres
-      - zipkin
+      - jaeger
       - rabbitmq
       - keycloak
   product:
@@ -208,7 +212,7 @@ services:
       - eureka-server
       - gateway
       - postgres
-      - zipkin
+      - jaeger
       - rabbitmq
       - keycloak
   order:
@@ -226,7 +230,7 @@ services:
       - eureka-server
       - gateway
       - postgres
-      - zipkin
+      - jaeger
       - rabbitmq
       - keycloak
   notification:
@@ -244,7 +248,7 @@ services:
       - eureka-server
       - gateway
       - postgres
-      - zipkin
+      - jaeger
       - rabbitmq
       - keycloak
   payment:
@@ -262,7 +266,7 @@ services:
       - eureka-server
       - gateway
       - postgres
-      - zipkin
+      - jaeger
       - rabbitmq
       - keycloak
   apikey-manager:
@@ -280,7 +284,7 @@ services:
       - eureka-server
       - gateway
       - postgres
-      - zipkin
+      - jaeger
       - rabbitmq
       - keycloak
 

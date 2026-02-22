@@ -30,11 +30,15 @@ services:
       - postgres-local
     restart: unless-stopped
 
-  zipkin:
-    image: openzipkin/zipkin:latest
-    container_name: zipkin-local
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger-local
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
     ports:
-      - "9411:9411"
+      - "16686:16686"   # Jaeger UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
     networks:
       - spring-local
 

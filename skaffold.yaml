@@ -49,7 +49,7 @@ manifests:
   rawYaml:
     - k8s/minikube/bootstrap/postgres/*.yml
     - k8s/minikube/bootstrap/rabbitmq/*.yml
-    - k8s/minikube/bootstrap/zipkin/*.yml
+    - k8s/minikube/bootstrap/jaeger/*.yml
     - k8s/minikube/bootstrap/keycloak/*.yml
     - k8s/minikube/bootstrap/prometheus/*.yml
     - k8s/minikube/bootstrap/grafana/*.yml
