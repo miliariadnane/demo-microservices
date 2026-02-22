@@ -47,7 +47,7 @@
                         <version>${jib.maven.plugin.version}</version>
                         <configuration>
                             <from>
-                                <image>eclipse-temurin:17-jre</image>
+                                <image>eclipse-temurin:21-jre</image>
                                 <platforms>
                                     <platform>
                                         <architecture>arm64</architecture>

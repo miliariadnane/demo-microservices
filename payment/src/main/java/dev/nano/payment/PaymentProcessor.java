@@ -40,9 +40,9 @@ public class PaymentProcessor {
                 paymentRepository.save(payment);
 
                 NotificationRequest notificationRequest = NotificationRequest.builder()
-                        .customerId(customer.getId())
-                        .customerName(customer.getName())
-                        .customerEmail(customer.getEmail())
+                        .customerId(customer.id())
+                        .customerName(customer.name())
+                        .customerEmail(customer.email())
                         .sender("nanodev")
                         .message("Your pending payment has been processed successfully at " + LocalDateTime.now())
                         .build();

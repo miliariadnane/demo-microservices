@@ -105,7 +105,7 @@
                             <version>${lombok.mapstruct.binding.version}</version>
                         </path>
                     </annotationProcessorPaths>
-          <release>17</release>
+          <release>21</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -128,7 +128,7 @@
                         <version>${jib.maven.plugin.version}</version>
                         <configuration>
                             <from>
-                                <image>eclipse-temurin:17-jre</image>
+                                <image>eclipse-temurin:21-jre</image>
                                 <platforms>
                                     <platform>
                                         <architecture>arm64</architecture>
@@ -173,7 +173,7 @@
                         <version>${jib.maven.plugin.version}</version>
                         <configuration>
                             <from>
-                                <image>eclipse-temurin:17-jre</image>
+                                <image>eclipse-temurin:21-jre</image>
                                 <platforms>
                                     <platform>
                                         <architecture>amd64</architecture>

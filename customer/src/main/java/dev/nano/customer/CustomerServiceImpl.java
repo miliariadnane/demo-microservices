@@ -110,13 +110,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public OrderResponse customerOrders(OrderRequest orderRequest) {
-        customerRepository.findById(orderRequest.getCustomerId())
+        customerRepository.findById(orderRequest.customerId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format(CUSTOMER_NOT_FOUND, orderRequest.getCustomerId())
+                        String.format(CUSTOMER_NOT_FOUND, orderRequest.customerId())
                 ));
 
         try {
-            productClient.getProduct(orderRequest.getProductId());
+            productClient.getProduct(orderRequest.productId());
             return orderClient.createOrder(orderRequest);
         } catch (FeignException e) {
             throw new OrderException("Failed to process order: " + e.getMessage());
@@ -125,9 +125,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public PaymentResponse customerPayment(PaymentRequest paymentRequest) {
-        customerRepository.findById(paymentRequest.getCustomerId())
+        customerRepository.findById(paymentRequest.customerId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format(CUSTOMER_NOT_FOUND, paymentRequest.getCustomerId())
+                        String.format(CUSTOMER_NOT_FOUND, paymentRequest.customerId())
                 ));
 
         try {

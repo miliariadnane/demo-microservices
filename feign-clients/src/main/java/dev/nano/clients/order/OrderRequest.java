@@ -1,12 +1,9 @@
 package dev.nano.clients.order;
 
-import lombok.Data;
-
-@Data
-public class OrderRequest {
-    private Long customerId;
-    private String customerName;
-    private String customerEmail;
-    private Long productId;
-    private Integer amount;
-}
+public record OrderRequest(
+        Long customerId,
+        String customerName,
+        String customerEmail,
+        Long productId,
+        Integer amount
+) {}

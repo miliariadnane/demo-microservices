@@ -51,12 +51,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO createOrder(OrderRequest orderRequest) {
         try {
-            ProductResponse product = productClient.getProduct(orderRequest.getProductId());
+            ProductResponse product = productClient.getProduct(orderRequest.productId());
 
             OrderEntity order = OrderEntity.builder()
-                    .customerId(orderRequest.getCustomerId())
-                    .productId(orderRequest.getProductId())
-                    .amount(orderRequest.getAmount())
+                    .customerId(orderRequest.customerId())
+                    .productId(orderRequest.productId())
+                    .amount(orderRequest.amount())
                     .createAt(LocalDateTime.now())
                     .build();
 
@@ -73,9 +73,9 @@ public class OrderServiceImpl implements OrderService {
     private void sendOrderNotification(OrderRequest order) {
         try {
             NotificationRequest notificationRequest = NotificationRequest.builder()
-                    .customerId(order.getCustomerId())
-                    .customerName(order.getCustomerName())
-                    .customerEmail(order.getCustomerEmail())
+                    .customerId(order.customerId())
+                    .customerName(order.customerName())
+                    .customerEmail(order.customerEmail())
                     .sender("NanoDev")
                     .message("Your order has been created successfully")
                     .build();
@@ -95,13 +95,13 @@ public class OrderServiceImpl implements OrderService {
         try {
             OrderCreatedEvent event = OrderCreatedEvent.builder()
                     .orderId(savedOrder.getId())
-                    .customerId(orderRequest.getCustomerId())
-                    .customerName(orderRequest.getCustomerName())
-                    .customerEmail(orderRequest.getCustomerEmail())
-                    .productId(orderRequest.getProductId())
-                    .productName(product.getName())
-                    .productPrice(product.getPrice())
-                    .amount(orderRequest.getAmount())
+                    .customerId(orderRequest.customerId())
+                    .customerName(orderRequest.customerName())
+                    .customerEmail(orderRequest.customerEmail())
+                    .productId(orderRequest.productId())
+                    .productName(product.name())
+                    .productPrice(product.price())
+                    .amount(orderRequest.amount())
                     .createdAt(savedOrder.getCreateAt())
                     .build();
 

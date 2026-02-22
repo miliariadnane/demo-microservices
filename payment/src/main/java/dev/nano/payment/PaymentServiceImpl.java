@@ -51,11 +51,11 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDTO createPayment(PaymentRequest paymentRequest) {
         try {
             // Verify order exists
-            orderClient.getOrder(paymentRequest.getOrderId());
+            orderClient.getOrder(paymentRequest.orderId());
 
             PaymentEntity payment = PaymentEntity.builder()
-                    .customerId(paymentRequest.getCustomerId())
-                    .orderId(paymentRequest.getOrderId())
+                    .customerId(paymentRequest.customerId())
+                    .orderId(paymentRequest.orderId())
                     .status(PaymentStatus.COMPLETED)
                     .createAt(LocalDateTime.now())
                     .build();
@@ -72,9 +72,9 @@ public class PaymentServiceImpl implements PaymentService {
     private void sendPaymentNotification(PaymentRequest payment) {
         try {
             NotificationRequest notificationRequest = NotificationRequest.builder()
-                    .customerId(payment.getCustomerId())
-                    .customerName(payment.getCustomerName())
-                    .customerEmail(payment.getCustomerEmail())
+                    .customerId(payment.customerId())
+                    .customerName(payment.customerName())
+                    .customerEmail(payment.customerEmail())
                     .sender("nanodev")
                     .message("Your payment has been processed successfully")
                     .build();
@@ -94,8 +94,8 @@ public class PaymentServiceImpl implements PaymentService {
         log.error("Fallback triggered for createPayment: {}", throwable.getMessage());
         // Persist payment with PENDING status for later processing
         PaymentEntity pendingPayment = PaymentEntity.builder()
-                .customerId(paymentRequest.getCustomerId())
-                .orderId(paymentRequest.getOrderId())
+                .customerId(paymentRequest.customerId())
+                .orderId(paymentRequest.orderId())
                 .status(PaymentStatus.PENDING)
                 .createAt(LocalDateTime.now())
                 .build();
