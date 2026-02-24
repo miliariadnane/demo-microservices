@@ -9,7 +9,32 @@ spring:
   config:
     import:
       - "classpath:shared-application-${spring.profiles.active}.yml"
+  threads:
+    virtual:
+      enabled: true
 
 # Deployment metadata — used by VersionHeaderFilter to identify the running version
 app:
   version: ${APP_VERSION:unknown}
+
+---
+# Local development: each service needs a unique gRPC port since all run on the same JVM host
+spring:
+  config:
+    activate:
+      on-profile: default
+
+grpc:
+  server:
+    port: 9092
+
+---
+# Containers (Docker / Kubernetes / EKS): each service has its own IP, port 9090 is safe to reuse
+spring:
+  config:
+    activate:
+      on-profile: "docker | kube | eks"
+
+grpc:
+  server:
+    port: 9090

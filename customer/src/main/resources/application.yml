@@ -11,4 +11,27 @@ spring:
       - "classpath:shared-application-${spring.profiles.active}.yml"
       - "classpath:clients-${spring.profiles.active}.properties"
       - "classpath:amqp-${spring.profiles.active}.properties"
+  threads:
+    virtual:
+      enabled: true   # Java 21 virtual threads
+
+---
+spring:
+  config:
+    activate:
+      on-profile: default
+
+grpc:
+  server:
+    port: 9091
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "docker | kube | eks"
+
+grpc:
+  server:
+    port: 9090
 

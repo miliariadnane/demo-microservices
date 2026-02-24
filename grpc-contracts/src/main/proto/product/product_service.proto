@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package dev.nano.grpc.product;
+
+option java_multiple_files  = true;
+option java_package         = "dev.nano.grpc.product";
+option java_outer_classname = "ProductServiceProto";
+
+service ProductGrpcService {
+    // Fetch a single product by its database ID.
+    rpc GetProduct (GetProductRequest) returns (GetProductResponse);
+}
+
+message GetProductRequest {
+    int64 product_id = 1;
+}
+
+message GetProductResponse {
+    int64  id                 = 1;
+    string name               = 2;
+    string image              = 3;
+    int32  price              = 4;
+    int32  available_quantity = 5;
+}

@@ -77,17 +77,15 @@ public class OrderController {
     }
 
     @Operation(
-            summary = "Create new order",
-            description = "Place a new order in the system with product and customer details"
+            summary = "Create order via REST + Feign",
+            description = "Places a new order. Fetches product from product-service using REST (HTTP/1.1 + JSON). "
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
                     description = "Order created successfully",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = OrderDTO.class)
-                    )
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = OrderDTO.class))
             ),
             @ApiResponse(responseCode = "400", description = "Invalid order data"),
             @ApiResponse(responseCode = "404", description = "Product or customer not found"),
@@ -96,10 +94,29 @@ public class OrderController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderDTO> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
-        log.info("Creating new order: {}", orderRequest);
-        return new ResponseEntity<>(
-                orderService.createOrder(orderRequest),
-                HttpStatus.CREATED
-        );
+        log.info("[REST] Creating order for productId={}", orderRequest.productId());
+        return new ResponseEntity<>(orderService.createOrder(orderRequest), HttpStatus.CREATED);
+    }
+
+    @Operation(
+            summary = "Create order via gRPC + Protobuf",
+            description = "Places a new order. Fetches product from product-service using gRPC (HTTP/2 + binary Protobuf). "
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Order created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = OrderDTO.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid order data"),
+            @ApiResponse(responseCode = "404", description = "Product or customer not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping("/grpc")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<OrderDTO> createOrderWithGrpc(@Valid @RequestBody OrderRequest orderRequest) {
+        log.info("[gRPC] Creating order for productId={}", orderRequest.productId());
+        return new ResponseEntity<>(orderService.createOrderWithGrpc(orderRequest), HttpStatus.CREATED);
     }
 }

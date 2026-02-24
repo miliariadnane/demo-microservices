@@ -18,6 +18,7 @@
     <module>payment</module>
     <module>amqp</module>
     <module>feign-clients</module>
+    <module>grpc-contracts</module>
     <module>apikey-manager</module>
   </modules>
 
@@ -35,6 +36,11 @@
     <springdoc.version>2.8.15</springdoc.version>
     <jib.maven.plugin.version>3.4.0</jib.maven.plugin.version>
     <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
+    <grpc.version>1.68.1</grpc.version>
+    <protobuf.version>3.25.5</protobuf.version>
+    <grpc.spring.boot.starter.version>3.1.0.RELEASE</grpc.spring.boot.starter.version>
+    <os.maven.plugin.version>1.7.1</os.maven.plugin.version>
+    <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
     <spring.boot.maven.plugin.version>3.5.11</spring.boot.maven.plugin.version>
     <spring.boot.dependencies.version>3.5.11</spring.boot.dependencies.version>
     <spring.cloud.dependencies.version>2025.0.1</spring.cloud.dependencies.version>
@@ -59,6 +65,28 @@
         <version>${spring.cloud.dependencies.version}</version>
         <scope>import</scope>
         <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>io.grpc</groupId>
+        <artifactId>grpc-bom</artifactId>
+        <version>${grpc.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>${protobuf.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.devh</groupId>
+        <artifactId>grpc-server-spring-boot-starter</artifactId>
+        <version>${grpc.spring.boot.starter.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.devh</groupId>
+        <artifactId>grpc-client-spring-boot-starter</artifactId>
+        <version>${grpc.spring.boot.starter.version}</version>
       </dependency>
     </dependencies>
 

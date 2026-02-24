@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package dev.nano.grpc.customer;
+
+option java_multiple_files  = true;
+option java_package         = "dev.nano.grpc.customer";
+option java_outer_classname = "CustomerServiceProto";
+
+service CustomerGrpcService {
+    // Fetch a single customer by its database ID.
+    rpc GetCustomer (GetCustomerRequest) returns (GetCustomerResponse);
+}
+
+message GetCustomerRequest {
+    int64 customer_id = 1;
+}
+
+message GetCustomerResponse {
+    int64  id      = 1;
+    string name    = 2;
+    string email   = 3;
+    string phone   = 4;
+    string address = 5;
+}

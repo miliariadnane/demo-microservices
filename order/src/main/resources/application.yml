@@ -11,3 +11,54 @@ spring:
       - "classpath:shared-application-${spring.profiles.active}.yml"
       - "classpath:clients-${spring.profiles.active}.properties"
       - "classpath:amqp-${spring.profiles.active}.properties"
+  threads:
+    virtual:
+      enabled: true
+
+---
+# Local development: connect to gRPC servers running on distinct local ports
+spring:
+  config:
+    activate:
+      on-profile: default
+
+grpc:
+  client:
+    product-grpc-service:
+      address: "static://localhost:9092"
+      negotiation-type: plaintext
+    customer-grpc-service:
+      address: "static://localhost:9091"
+      negotiation-type: plaintext
+
+---
+# Docker Compose: resolve services by container name, all gRPC servers on port 9090
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+grpc:
+  client:
+    product-grpc-service:
+      address: "static://product:9090"
+      negotiation-type: plaintext
+    customer-grpc-service:
+      address: "static://customer:9090"
+      negotiation-type: plaintext
+
+---
+# Kubernetes / AWS EKS: resolve via cluster-internal DNS
+spring:
+  config:
+    activate:
+      on-profile: "kube | eks"
+
+grpc:
+  client:
+    product-grpc-service:
+      address: "static://product:9090"
+      negotiation-type: plaintext
+    customer-grpc-service:
+      address: "static://customer:9090"
+      negotiation-type: plaintext
