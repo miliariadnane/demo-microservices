@@ -51,6 +51,17 @@ services:
     networks:
       - spring-local
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-local
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-local:/root/.ollama
+    networks:
+      - spring-local
+    restart: unless-stopped
+
   keycloak:
     container_name: keycloak-local
     image: quay.io/keycloak/keycloak:25.0.1
@@ -83,3 +94,4 @@ networks:
 volumes:
   postgres-local:
   pgadmin-local:
+  ollama-local:

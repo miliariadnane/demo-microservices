@@ -18,4 +18,6 @@ public class BaseController {
     public static final String API_KEY_DESCRIPTION = "Operations for managing API keys and their authorizations";
     public static final String APPLICATION_TAG = "Application Management";
     public static final String APPLICATION_DESCRIPTION = "Operations for managing application access and permissions";
+    public static final String AI_ASSISTANT_TAG = "AI Assistant";
+    public static final String AI_ASSISTANT_DESCRIPTION = "AI-powered assistant using Spring AI with function calling to orchestrate microservices";
 }

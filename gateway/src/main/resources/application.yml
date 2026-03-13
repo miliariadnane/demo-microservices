@@ -39,6 +39,10 @@ spring:
           uri: lb://APIKEY-MANAGER
           predicates:
             - Path=/api/v1/apiKey-manager/**
+        - id: ai-assistant
+          uri: lb://AI-ASSISTANT
+          predicates:
+            - Path=/api/v1/ai/**
   config:
     import:
       - "classpath:shared-application-${spring.profiles.active}.yml"

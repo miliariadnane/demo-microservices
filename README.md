@@ -152,7 +152,7 @@ Show your support by:
 
 ### Microservices Architecture
 
-![](/docs/images/architecture-diagram.png)
+![](/docs/images/architecture-diagram.jpeg)
 
 ### Infrastructure Architecture
 

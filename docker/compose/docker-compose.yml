@@ -58,6 +58,24 @@ services:
       resources:
         limits:
           memory: 512M
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ~/.ollama:/root/.ollama
+    networks:
+      - spring
+    healthcheck:
+      test: [ "CMD-SHELL", "ollama list || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 4G
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
     container_name: rabbitmq
@@ -291,6 +309,23 @@ services:
       - jaeger
       - rabbitmq
       - keycloak
+  ai-assistant:
+    image: miliariadnane/ai-assistant:latest
+    container_name: ai-assistant
+    ports:
+      - "8007:8007"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - OLLAMA_BASE_URL=http://ollama:11434
+    networks:
+      - spring
+      - monitoring
+    depends_on:
+      - eureka-server
+      - gateway
+      - jaeger
+      - keycloak
+      - ollama
 
 networks:
   postgres:
@@ -303,3 +338,4 @@ volumes:
   postgres:
   pgadmin:
   prometheus_data: {}
+  ollama_data:

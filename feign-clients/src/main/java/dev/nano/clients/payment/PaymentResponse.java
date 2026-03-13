@@ -6,5 +6,6 @@ public record PaymentResponse(
         Long id,
         Long customerId,
         Long orderId,
-        LocalDateTime createAt
+        LocalDateTime createAt,
+        String status
 ) {}

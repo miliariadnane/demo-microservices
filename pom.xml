@@ -20,6 +20,7 @@
     <module>feign-clients</module>
     <module>grpc-contracts</module>
     <module>apikey-manager</module>
+    <module>ai-assistant</module>
   </modules>
 
   <name>demo-microservices</name>
@@ -44,6 +45,7 @@
     <spring.boot.maven.plugin.version>3.5.11</spring.boot.maven.plugin.version>
     <spring.boot.dependencies.version>3.5.11</spring.boot.dependencies.version>
     <spring.cloud.dependencies.version>2025.0.1</spring.cloud.dependencies.version>
+    <spring.ai.version>1.0.0</spring.ai.version>
     <image>miliariadnane/${project.artifactId}</image>
     <image.custom.tag/>
   </properties>
@@ -87,6 +89,13 @@
         <groupId>net.devh</groupId>
         <artifactId>grpc-client-spring-boot-starter</artifactId>
         <version>${grpc.spring.boot.starter.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.ai</groupId>
+        <artifactId>spring-ai-bom</artifactId>
+        <version>${spring.ai.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
 
