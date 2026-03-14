@@ -77,8 +77,8 @@ public class OrderController {
     }
 
     @Operation(
-            summary = "Create order via REST + Feign",
-            description = "Places a new order. Fetches product from product-service using REST (HTTP/1.1 + JSON). "
+            summary = "Create order via REST + Feign (synchronous)",
+            description = "Places a new order using REST. Saved as CONFIRMED immediately."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -99,8 +99,8 @@ public class OrderController {
     }
 
     @Operation(
-            summary = "Create order via gRPC + Protobuf",
-            description = "Places a new order. Fetches product from product-service using gRPC (HTTP/2 + binary Protobuf). "
+            summary = "Create order via gRPC + Protobuf (synchronous)",
+            description = "Places a new order using gRPC. Saved as CONFIRMED immediately."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -118,5 +118,26 @@ public class OrderController {
     public ResponseEntity<OrderDTO> createOrderWithGrpc(@Valid @RequestBody OrderRequest orderRequest) {
         log.info("[gRPC] Creating order for productId={}", orderRequest.productId());
         return new ResponseEntity<>(orderService.createOrderWithGrpc(orderRequest), HttpStatus.CREATED);
+    }
+
+    @Operation(
+            summary = "Create order via Saga (Choreography — async)",
+            description = "Saves order as PENDING and starts the saga: Product → Payment → Order confirm."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "202",
+                    description = "Order accepted — saga started (status: PENDING)",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = OrderDTO.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid order data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping("/saga")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<OrderDTO> createOrderSaga(@Valid @RequestBody OrderRequest orderRequest) {
+        log.info("[SAGA] Creating order for productId={}", orderRequest.productId());
+        return new ResponseEntity<>(orderService.createOrderSaga(orderRequest), HttpStatus.ACCEPTED);
     }
 }

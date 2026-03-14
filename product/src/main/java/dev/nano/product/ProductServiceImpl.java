@@ -3,10 +3,12 @@ package dev.nano.product;
 import dev.nano.exceptionhandler.business.ProductException;
 import dev.nano.exceptionhandler.core.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +16,7 @@ import static dev.nano.product.ProductConstant.*;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
@@ -84,5 +87,40 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             throw new ProductException(String.format(PRODUCT_DELETE_ERROR, e.getMessage()));
         }
+    }
+
+    @Transactional
+    @Override
+    public void reserveStock(Long productId, Integer quantity) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(PRODUCT_NOT_FOUND, productId)
+                ));
+
+        if (product.getAvailableQuantity() < quantity) {
+            throw new ProductException(String.format(
+                    "Insufficient stock for product %d: requested %d, available %d",
+                    productId, quantity, product.getAvailableQuantity()
+            ));
+        }
+
+        product.setAvailableQuantity(product.getAvailableQuantity() - quantity);
+        productRepository.save(product);
+        log.info("Stock reserved: product={}, quantity={}, remaining={}",
+                productId, quantity, product.getAvailableQuantity());
+    }
+
+    @Transactional
+    @Override
+    public void releaseStock(Long productId, Integer quantity) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(PRODUCT_NOT_FOUND, productId)
+                ));
+
+        product.setAvailableQuantity(product.getAvailableQuantity() + quantity);
+        productRepository.save(product);
+        log.info("Stock released (compensation): product={}, quantity={}, available={}",
+                productId, quantity, product.getAvailableQuantity());
     }
 }

@@ -7,5 +7,6 @@ public record OrderResponse(
         Long customerId,
         Long productId,
         Integer amount,
-        LocalDateTime createAt
+        LocalDateTime createAt,
+        String status
 ) {}

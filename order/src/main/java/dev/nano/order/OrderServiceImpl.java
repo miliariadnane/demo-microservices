@@ -6,6 +6,7 @@ import dev.nano.clients.order.OrderCreatedEvent;
 import dev.nano.clients.order.OrderRequest;
 import dev.nano.clients.product.ProductClient;
 import dev.nano.clients.product.ProductResponse;
+import dev.nano.clients.saga.PlaceOrderEvent;
 import dev.nano.exceptionhandler.business.NotificationException;
 import dev.nano.exceptionhandler.business.OrderException;
 import dev.nano.exceptionhandler.core.ResourceNotFoundException;
@@ -16,6 +17,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,8 +31,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final ProductClient productClient;         // REST + Feign  (HTTP/1.1 + JSON)
-    private final ProductGrpcClient productGrpcClient; // gRPC + Protobuf (HTTP/2 + binary)
+    private final ProductClient productClient;
+    private final ProductGrpcClient productGrpcClient;
     private final RabbitMQProducer rabbitMQProducer;
 
     @Override
@@ -49,14 +51,14 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toListDTO(orders);
     }
 
-    // REST + Feign
+    // REST + Feign (synchronous)
     @CircuitBreaker(name = "productService", fallbackMethod = "createOrderFallback")
     @Override
     public OrderDTO createOrder(OrderRequest orderRequest) {
         long start = System.nanoTime();
         try {
             ProductResponse product = productClient.getProduct(orderRequest.productId());
-            OrderEntity savedOrder = saveOrder(orderRequest);
+            OrderEntity savedOrder = saveOrder(orderRequest, OrderStatus.CONFIRMED);
             sendOrderNotification(orderRequest);
             publishOrderCreatedEvent(savedOrder, orderRequest, product.name(), product.price());
             return orderMapper.toDTO(savedOrder);
@@ -67,14 +69,14 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    // gRPC + Protobuf
+    // gRPC + Protobuf (synchronous)
     @CircuitBreaker(name = "productService", fallbackMethod = "createOrderWithGrpcFallback")
     @Override
     public OrderDTO createOrderWithGrpc(OrderRequest orderRequest) {
         long start = System.nanoTime();
         try {
             GetProductResponse product = productGrpcClient.getProduct(orderRequest.productId());
-            OrderEntity savedOrder = saveOrder(orderRequest);
+            OrderEntity savedOrder = saveOrder(orderRequest, OrderStatus.CONFIRMED);
             sendOrderNotification(orderRequest);
             publishOrderCreatedEvent(savedOrder, orderRequest, product.getName(), product.getPrice());
             return orderMapper.toDTO(savedOrder);
@@ -83,18 +85,65 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private OrderEntity saveOrder(OrderRequest orderRequest) {
+    // Saga — Choreography (async)
+    @Override
+    public OrderDTO createOrderSaga(OrderRequest orderRequest) {
+        OrderEntity savedOrder = saveOrder(orderRequest, OrderStatus.PENDING);
+
+        PlaceOrderEvent sagaEvent = PlaceOrderEvent.builder()
+                .orderId(savedOrder.getId())
+                .customerId(orderRequest.customerId())
+                .customerName(orderRequest.customerName())
+                .customerEmail(orderRequest.customerEmail())
+                .productId(orderRequest.productId())
+                .amount(orderRequest.amount())
+                .build();
+
+        rabbitMQProducer.publish(
+                "internal.exchange",
+                "saga.place-order.routing-key",
+                sagaEvent
+        );
+
+        log.info("Saga started — PlaceOrderEvent published for orderId: {}", savedOrder.getId());
+        return orderMapper.toDTO(savedOrder);
+    }
+
+    @Transactional
+    @Override
+    public void confirmOrder(Long orderId) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ORDER_NOT_FOUND, orderId)));
+
+        order.setStatus(OrderStatus.CONFIRMED);
+        orderRepository.save(order);
+        log.info("Order {} confirmed", orderId);
+    }
+
+    @Transactional
+    @Override
+    public void cancelOrder(Long orderId) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ORDER_NOT_FOUND, orderId)));
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+        log.info("Order {} cancelled", orderId);
+    }
+
+    private OrderEntity saveOrder(OrderRequest orderRequest, OrderStatus status) {
         return orderRepository.save(
                 OrderEntity.builder()
                         .customerId(orderRequest.customerId())
                         .productId(orderRequest.productId())
                         .amount(orderRequest.amount())
+                        .status(status)
                         .createAt(LocalDateTime.now())
                         .build()
         );
     }
 
-    private void sendOrderNotification(OrderRequest order) {
+    void sendOrderNotification(OrderRequest order) {
         try {
             rabbitMQProducer.publish(
                     "internal.exchange",
@@ -113,8 +162,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void publishOrderCreatedEvent(OrderEntity savedOrder, OrderRequest orderRequest,
-                                          String productName, double productPrice) {
+    void publishOrderCreatedEvent(OrderEntity savedOrder, OrderRequest orderRequest,
+                                  String productName, double productPrice) {
         try {
             rabbitMQProducer.publish(
                     "internal.exchange",

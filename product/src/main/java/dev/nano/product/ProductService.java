@@ -8,4 +8,6 @@ public interface ProductService {
     List<ProductDTO> getAllProducts(int page, int limit, String search);
     ProductDTO update(long id, ProductDTO request);
     void delete(long id);
+    void reserveStock(Long productId, Integer quantity);
+    void releaseStock(Long productId, Integer quantity);
 }

@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS "order"
     customer_id BIGINT           NOT NULL,
     product_id  BIGINT           NOT NULL,
     amount      DOUBLE PRECISION NOT NULL,
-    create_at   TIMESTAMP        NOT NULL
+    create_at   TIMESTAMP        NOT NULL,
+    status      VARCHAR(50)      NOT NULL DEFAULT 'PENDING'
 );
 
 -- CQRS read model

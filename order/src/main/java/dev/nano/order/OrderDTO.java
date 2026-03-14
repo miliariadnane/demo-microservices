@@ -27,4 +27,6 @@ public class OrderDTO {
     private double amount;
 
     private LocalDateTime createAt;
+
+    private String status;
 }

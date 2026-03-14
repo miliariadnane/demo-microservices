@@ -9,6 +9,8 @@ spring:
   config:
     import:
       - "classpath:shared-application-${spring.profiles.active}.yml"
+      - "classpath:amqp-${spring.profiles.active}.properties"
+      - "classpath:clients-${spring.profiles.active}.properties"
   threads:
     virtual:
       enabled: true

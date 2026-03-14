@@ -56,4 +56,9 @@ public class OrderEntity {
             columnDefinition = "TIMESTAMP"
     )
     private LocalDateTime createAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @Builder.Default
+    private OrderStatus status = OrderStatus.PENDING;
 }
